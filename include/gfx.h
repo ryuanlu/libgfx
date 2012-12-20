@@ -9,8 +9,8 @@ typedef enum
 
 }gfx_result;
 
-
 typedef struct gfx_context* gfx_context;
+
 
 void gfx_init(int *argc, char ***argv);
 gfx_context gfx_context_new(gfx_context sharelist);

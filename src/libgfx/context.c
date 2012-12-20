@@ -6,20 +6,11 @@
 #endif
 #include <GL/glew.h>
 #include "gfx.h"
+#include "context.h"
 
 
 static gfx_context current_context = NULL;
 static int glewInitialized = 0;
-
-struct gfx_context
-{
-#ifdef GFX_GLX_BUILD
-	Display* display;
-	GLXContext opengl_context;
-#endif
-
-};
-
 
 #ifdef GFX_GLX_BUILD
 static void create_glx_render_context(GLXContext* context, Display** display, GLXContext sharelist)
@@ -95,12 +86,26 @@ gfx_context gfx_context_new(gfx_context sharelist)
 		create_glx_render_context(&context->opengl_context, &context->display, rc);
 	}
 #endif
+
+	gfx_context_make_current(context);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	/* Create default FBO */
+	glGenFramebuffers(1, &context->fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, context->fbo);
+
+	/* Initialize some built-in shaders */
+
 	return context;
 }
 
 gfx_result gfx_context_delete(gfx_context* context)
 {
 	if(!context||!*context) return GFX_ERROR;
+
+	glDeleteFramebuffers(1, &(*context)->fbo);
 #ifdef GFX_GLX_BUILD
 	destroy_glx_render_context((*context)->display, (*context)->opengl_context);
 #endif
@@ -113,16 +118,24 @@ gfx_result gfx_context_delete(gfx_context* context)
 
 gfx_result gfx_context_make_current(gfx_context context)
 {
-	Bool ret;
-	if(!context) return GFX_ERROR;
+	Bool ret = True;
+
+	if(!context)
+	{
+		if(current_context)
+#ifdef GFX_GLX_BUILD
+			ret = glXMakeCurrent(current_context->display, None, NULL);
+#endif
+	}
 
 	if(current_context != context)
 	{
 #ifdef GFX_GLX_BUILD
 		ret = glXMakeCurrent(context->display, XRootWindow(context->display, 0), context->opengl_context);
 #endif
-		if(ret) current_context = context;
+		if(ret)
+			current_context = context;
 	}
 
-	return GFX_SUCCESS;
+	return ret ? GFX_SUCCESS : GFX_ERROR;
 }
