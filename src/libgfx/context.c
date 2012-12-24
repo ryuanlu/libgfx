@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib.h>
 #ifdef GFX_GLX_BUILD
 #include <GL/glxew.h>
 #endif
@@ -109,6 +108,8 @@ gfx_result gfx_context_delete(gfx_context* context)
 #ifdef GFX_GLX_BUILD
 	destroy_glx_render_context((*context)->display, (*context)->opengl_context);
 #endif
+	if(*context == current_context)
+		current_context = NULL;
 	free(*context);
 	*context = NULL;
 
