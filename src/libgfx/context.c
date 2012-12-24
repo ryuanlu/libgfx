@@ -69,7 +69,7 @@ static void destroy_glx_render_context(Display* display, GLXContext context)
 
 #endif
 
-gfx_context gfx_context_new(gfx_context sharelist)
+gfx_context gfx_context_new(const gfx_context sharelist)
 {
 	gfx_context context = NULL;
 
@@ -117,7 +117,7 @@ gfx_result gfx_context_delete(gfx_context* context)
 }
 
 
-gfx_result gfx_context_make_current(gfx_context context)
+gfx_result gfx_context_make_current(const gfx_context context)
 {
 	Bool ret = True;
 
