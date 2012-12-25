@@ -77,7 +77,7 @@ gfx_texture gfx_texture_new(const int width, const int height, const int depth, 
 	texture->depth = (depth < 1) ? 1 : depth;
 
 	glGenTextures(1, &texture->object);
-	glBindTexture(texture_target, texture->object);
+	gfx_texture_bind(0, texture);
 
 	switch(texture_target)
 	{
@@ -132,7 +132,7 @@ gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image imag
 	if(!texture || !image)
 		return GFX_ERROR;
 
-	glBindTexture(texture->target, texture->object);
+	gfx_texture_bind(0, texture);
 
 	switch(texture->target)
 	{
@@ -155,13 +155,23 @@ gfx_result gfx_texture_generate_mipmaps(gfx_texture texture)
 	if(texture->enabled_mipmaps)
 		return GFX_ERROR;
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(texture->target, texture->object);
+	gfx_texture_bind(0, texture);
 	glTexParameteri(texture->target, GL_GENERATE_MIPMAP, GL_TRUE);
 	glTexParameteri(texture->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glGenerateMipmap(texture->target);
 
 	texture->enabled_mipmaps = GL_TRUE;
+
+	return GFX_SUCCESS;
+}
+
+gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture)
+{
+	if(texture_unit < 0 || texture_unit >= GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS)
+		return GFX_ERROR;
+
+	glActiveTexture(GL_TEXTURE0 + texture_unit);
+	glBindTexture(texture->target, texture->object);
 
 	return GFX_SUCCESS;
 }
