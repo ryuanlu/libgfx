@@ -11,6 +11,7 @@ struct gfx_texture
 	int width;
 	int height;
 	int depth;
+	int enabled_mipmaps;
 };
 
 #pragma GCC visibility push(hidden)

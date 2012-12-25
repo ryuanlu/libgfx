@@ -149,3 +149,20 @@ gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image imag
 
 	return GFX_SUCCESS;
 }
+
+gfx_result gfx_texture_generate_mipmaps(gfx_texture texture)
+{
+	if(texture->enabled_mipmaps)
+		return GFX_ERROR;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(texture->target, texture->object);
+	glTexParameteri(texture->target, GL_GENERATE_MIPMAP, GL_TRUE);
+	glTexParameteri(texture->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateMipmap(texture->target);
+
+	texture->enabled_mipmaps = GL_TRUE;
+
+	return GFX_SUCCESS;
+}
+

@@ -42,5 +42,6 @@ gfx_texture gfx_texture_new(const int width, const int height, const int depth, 
 gfx_result gfx_texture_delete(gfx_texture* texture);
 gfx_texture gfx_texture_new_from_image(const gfx_image image);
 gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image, const int offset_x, const int offset_y, const int offset_z);
+gfx_result gfx_texture_generate_mipmaps(gfx_texture texture);
 
 #endif /* GFX_H_ */
