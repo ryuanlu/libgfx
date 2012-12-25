@@ -1,17 +1,9 @@
 #include <stdlib.h>
 #include <GL/glew.h>
+#include "texture.h"
 #include "image.h"
 
-struct gfx_texture
-{
-	GLuint object;
-	GLenum target;
-	int width;
-	int height;
-	int depth;
-};
-
-static GLenum get_gl_format(gfx_pixel_format format)
+GLenum gfx_get_gl_format(const gfx_pixel_format format)
 {
 	GLenum table[] =
 	{
@@ -30,7 +22,7 @@ static GLenum get_gl_format(gfx_pixel_format format)
 	return table[format];
 }
 
-static GLenum get_gl_internal_format(gfx_pixel_format format)
+GLenum gfx_get_gl_internal_format(const gfx_pixel_format format)
 {
 	GLenum table[] =
 	{
@@ -49,7 +41,7 @@ static GLenum get_gl_internal_format(gfx_pixel_format format)
 	return table[format];
 }
 
-static GLenum get_gl_data_type(gfx_pixel_format format)
+GLenum gfx_get_gl_data_type(const gfx_pixel_format format)
 {
 	switch(format)
 	{
@@ -90,13 +82,13 @@ gfx_texture gfx_texture_new(const int width, const int height, const int depth, 
 	switch(texture_target)
 	{
 	case GL_TEXTURE_1D:
-		glTexImage1D(texture_target, 0, get_gl_internal_format(format), width, 0, get_gl_format(format), get_gl_data_type(format), data);
+		glTexImage1D(texture_target, 0, gfx_get_gl_internal_format(format), width, 0, gfx_get_gl_format(format), gfx_get_gl_data_type(format), data);
 		break;
 	case GL_TEXTURE_2D:
-		glTexImage2D(texture_target, 0, get_gl_internal_format(format), width, height, 0, get_gl_format(format), get_gl_data_type(format), data);
+		glTexImage2D(texture_target, 0, gfx_get_gl_internal_format(format), width, height, 0, gfx_get_gl_format(format), gfx_get_gl_data_type(format), data);
 		break;
 	case GL_TEXTURE_3D:
-		glTexImage3D(texture_target, 0, get_gl_internal_format(format), width, height, depth, 0, get_gl_format(format), get_gl_data_type(format), data);
+		glTexImage3D(texture_target, 0, gfx_get_gl_internal_format(format), width, height, depth, 0, gfx_get_gl_format(format), gfx_get_gl_data_type(format), data);
 		break;
 	}
 
