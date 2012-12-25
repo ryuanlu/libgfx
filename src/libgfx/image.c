@@ -72,11 +72,11 @@ gfx_result gfx_image_copy_from_texture(gfx_image image, const gfx_texture textur
 	if(!texture || !image)
 		return GFX_ERROR;
 
-	if(texture->width != image->width)
+	if(image->width != texture->width)
 		return GFX_ERROR;
-	if(texture->height > image->height)
+	if(image->height < texture->height)
 		return GFX_ERROR;
-	if(texture->depth > image->depth)
+	if(image->depth < texture->depth)
 		return GFX_ERROR;
 
 	glBindTexture(texture->target, texture->object);
