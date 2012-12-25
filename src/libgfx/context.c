@@ -88,12 +88,15 @@ gfx_context gfx_context_new(const gfx_context sharelist)
 
 	gfx_context_make_current(context);
 
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	/* Create default FBO */
 	glGenFramebuffers(1, &context->fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, context->fbo);
+
+	glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
 
 	/* Initialize some built-in shaders */
 
