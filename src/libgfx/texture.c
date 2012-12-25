@@ -126,3 +126,26 @@ gfx_texture gfx_texture_new_from_image(const gfx_image image)
 
 	return texture;
 }
+
+gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image, const int offset_x, const int offset_y, const int offset_z)
+{
+	if(!texture || !image)
+		return GFX_ERROR;
+
+	glBindTexture(texture->target, texture->object);
+
+	switch(texture->target)
+	{
+	case GL_TEXTURE_1D:
+		glTexSubImage1D(texture->target, 0, offset_x, image->width, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+		break;
+	case GL_TEXTURE_2D:
+		glTexSubImage2D(texture->target, 0, offset_x, offset_y, image->width, image->height, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+		break;
+	case GL_TEXTURE_3D:
+		glTexSubImage3D(texture->target, 0, offset_x, offset_y, offset_z, image->width, image->height, image->depth, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+		break;
+	}
+
+	return GFX_SUCCESS;
+}

@@ -41,6 +41,6 @@ gfx_result gfx_image_copy_from_texture(gfx_image image, const gfx_texture textur
 gfx_texture gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char* data);
 gfx_result gfx_texture_delete(gfx_texture* texture);
 gfx_texture gfx_texture_new_from_image(const gfx_image image);
-gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image);
+gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image, const int offset_x, const int offset_y, const int offset_z);
 
 #endif /* GFX_H_ */
