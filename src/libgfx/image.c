@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "image.h"
+#include "texture.h"
+
 
 static int sizeof_pixel(gfx_pixel_format format)
 {
@@ -65,3 +67,20 @@ gfx_result gfx_image_copy_from_memory(gfx_image image, const char* data)
 	return GFX_SUCCESS;
 }
 
+gfx_result gfx_image_copy_from_texture(gfx_image image, const gfx_texture texture)
+{
+	if(!texture || !image)
+		return GFX_ERROR;
+
+	if(texture->width != image->width)
+		return GFX_ERROR;
+	if(texture->height > image->height)
+		return GFX_ERROR;
+	if(texture->depth > image->depth)
+		return GFX_ERROR;
+
+	glBindTexture(texture->target, texture->object);
+	glGetTexImage(texture->target, 0, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+
+	return GFX_SUCCESS;
+}
