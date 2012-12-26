@@ -35,6 +35,10 @@ gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx
 		glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT, width, height);
 	else glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 
+
+	gfx_framebuffer_attach_texture(fb, GFX_ATTACH_COLOR_BUFFER, NULL);
+	gfx_framebuffer_attach_texture(fb, GFX_ATTACH_DEPTH_BUFFER, NULL);
+
 	return fb;
 }
 
