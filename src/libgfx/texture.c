@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include "texture.h"
 #include "image.h"
+#include "framebuffer.h"
 
 GLenum gfx_get_gl_format(const gfx_pixel_format format)
 {
@@ -176,3 +177,35 @@ gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture)
 	return GFX_SUCCESS;
 }
 
+gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_framebuffer framebuffer, const gfx_fb_attachment target)
+{
+	GLenum attach;
+	GLuint object;
+	GLenum buffer_bit;
+
+	if(!texture || !framebuffer)
+		return GFX_ERROR;
+
+	switch(target)
+	{
+	case GFX_ATTACH_COLOR_BUFFER:
+		attach = GL_COLOR_ATTACHMENT0;
+		buffer_bit = GL_COLOR_BUFFER_BIT;
+		object = framebuffer->bind_color_buffer;
+		break;
+	case GFX_ATTACH_DEPTH_BUFFER:
+		attach = GL_DEPTH_ATTACHMENT;
+		object = framebuffer->bind_depth_buffer;
+		buffer_bit = GL_DEPTH_BUFFER_BIT;
+		break;
+	default:
+		break;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->fbo);
+	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, attach, GL_TEXTURE_2D, object);
+	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, attach, GL_TEXTURE_2D, texture->object);
+	glBlitFramebuffer(0, 0, framebuffer->width - 1, framebuffer->height - 1, 0, 0, texture->width - 1, texture->height - 1, buffer_bit, GL_LINEAR);
+
+	return GFX_SUCCESS;
+}

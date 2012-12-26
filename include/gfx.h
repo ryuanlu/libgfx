@@ -52,6 +52,7 @@ gfx_texture gfx_texture_new_from_image(const gfx_image image);
 gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image, const int offset_x, const int offset_y, const int offset_z);
 gfx_result gfx_texture_generate_mipmaps(gfx_texture texture);
 gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture);
+gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_framebuffer framebuffer, const gfx_fb_attachment target);
 
 gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples);
 gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx_fb_attachment target, const gfx_texture texture);
