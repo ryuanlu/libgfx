@@ -56,19 +56,27 @@ gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx
 	{
 	case GFX_ATTACH_COLOR_BUFFER:
 		attach = GL_COLOR_ATTACHMENT0;
-		object = framebuffer->builtin_color_buffer;
+		framebuffer->bind_color_buffer = (texture == NULL ? framebuffer->builtin_color_buffer : texture->object);
+		object = framebuffer->bind_color_buffer;
 		break;
 	case GFX_ATTACH_DEPTH_BUFFER:
 		attach = GL_DEPTH_ATTACHMENT;
-		object = framebuffer->builtin_depth_buffer;
+		framebuffer->bind_depth_buffer = (texture == NULL ? framebuffer->builtin_depth_buffer : texture->object);
+		object = framebuffer->bind_depth_buffer;
 		break;
 	default:
 		break;
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->fbo);
-	glFramebufferTexture(GL_DRAW_FRAMEBUFFER, attach, GL_TEXTURE_2D, texture == NULL ? texture->object : object);
+	glFramebufferTexture(GL_DRAW_FRAMEBUFFER, attach, GL_TEXTURE_2D, object);
 
 	return GFX_SUCCESS;
 }
 
+gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer ? framebuffer->fbo : 0);
+
+	return GFX_SUCCESS;
+}

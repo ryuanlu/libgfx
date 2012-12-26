@@ -55,7 +55,6 @@ gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture);
 
 gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples);
 gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx_fb_attachment target, const gfx_texture texture);
-
-
+gfx_result gfx_framebuffer_bind(gfx_framebuffer framebuffer);
 
 #endif /* GFX_H_ */
