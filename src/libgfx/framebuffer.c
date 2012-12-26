@@ -50,7 +50,7 @@ gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx
 	if(!framebuffer || target >= GFX_NUMBER_OF_ATTACH_DEPTH_BUFFER || target < 0)
 		return GFX_ERROR;
 
-	if(framebuffer->width != texture->width || framebuffer->height != texture->height)
+	if(texture && (framebuffer->width != texture->width || framebuffer->height != texture->height))
 		return GFX_ERROR;
 
 	if(texture->target != GL_TEXTURE_2D)
