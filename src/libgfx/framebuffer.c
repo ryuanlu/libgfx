@@ -76,13 +76,11 @@ gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const 
 	{
 	case GFX_ATTACH_COLOR_BUFFER:
 		framebuffer->bind_color_buffer = (texture == NULL ? framebuffer->builtin_color_buffer : texture->object);
-		framebuffer->bind_color_buffer_type = (texture == NULL ? GFX_FRAMEBUFFER_BIND_RENDERBUFFER : GFX_FRAMEBUFFER_BIND_TEXTURE);
 		attach = GL_COLOR_ATTACHMENT0;
 		object = framebuffer->bind_color_buffer;
 		break;
 	case GFX_ATTACH_DEPTH_BUFFER:
 		framebuffer->bind_depth_buffer = (texture == NULL ? framebuffer->builtin_depth_buffer : texture->object);
-		framebuffer->bind_depth_buffer_type = (texture == NULL ? GFX_FRAMEBUFFER_BIND_RENDERBUFFER : GFX_FRAMEBUFFER_BIND_TEXTURE);
 		attach = GL_DEPTH_ATTACHMENT;
 		object = framebuffer->bind_depth_buffer;
 		break;
