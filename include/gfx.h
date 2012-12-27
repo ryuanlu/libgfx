@@ -30,6 +30,13 @@ typedef enum
 	GFX_NUMBER_OF_ATTACH_DEPTH_BUFFER
 }gfx_fb_attachment;
 
+typedef enum
+{
+	GFX_CLEAR_COLOR_BUFFER = (0x1 << 0),
+	GFX_CLEAR_DEPTH_BUFFER = (0x1 << 1),
+	GFX_CLEAR_COLOR_AND_DEPTH = GFX_CLEAR_COLOR_BUFFER|GFX_CLEAR_DEPTH_BUFFER
+}gfx_fb_clear_target;
+
 typedef struct gfx_context* gfx_context;
 typedef struct gfx_image* gfx_image;
 typedef struct gfx_texture* gfx_texture;
@@ -60,5 +67,7 @@ gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx
 gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer);
 gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const gfx_texture texture);
 gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer);
+void gfx_framebuffer_clear(const float red, const float green, const float blue, const float alpha, const gfx_fb_clear_target target);
+
 
 #endif /* GFX_H_ */

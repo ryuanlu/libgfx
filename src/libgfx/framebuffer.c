@@ -106,3 +106,12 @@ gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer)
 
 	return GFX_SUCCESS;
 }
+
+void gfx_framebuffer_clear(const float red, const float green, const float blue, const float alpha, const gfx_fb_clear_target target)
+{
+	GLbitfield mask = 0;
+	glClearColor(red, green, blue, alpha);
+	mask |= (target & GFX_CLEAR_COLOR_BUFFER) ? GL_COLOR_BUFFER_BIT : 0;
+	mask |= (target & GFX_CLEAR_DEPTH_BUFFER) ? GL_DEPTH_BUFFER_BIT : 0;
+	glClear(mask);
+}
