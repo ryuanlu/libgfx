@@ -45,7 +45,21 @@ gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx
 	return fb;
 }
 
-gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx_fb_attachment target, const gfx_texture texture)
+gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer)
+{
+	gfx_framebuffer fb = *framebuffer;
+
+	glDeleteRenderbuffers(1, &fb->bind_color_buffer);
+	glDeleteRenderbuffers(1, &fb->bind_depth_buffer);
+	glDeleteFramebuffers(1, &fb->fbo);
+
+	free(fb);
+	*framebuffer = NULL;
+
+	return GFX_SUCCESS;
+}
+
+gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const gfx_texture texture)
 {
 	GLenum attach;
 	GLuint object;

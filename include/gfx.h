@@ -57,6 +57,7 @@ gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture);
 gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_attachment target);
 
 gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples);
+gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer);
 gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const gfx_texture texture);
 gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer);
 
