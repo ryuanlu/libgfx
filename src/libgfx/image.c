@@ -84,3 +84,13 @@ gfx_result gfx_image_copy_from_texture(gfx_image image, const gfx_texture textur
 
 	return GFX_SUCCESS;
 }
+
+unsigned char* gfx_image_get_data(const gfx_image image)
+{
+	return image ? image->data : NULL;
+}
+
+int gfx_image_get_size(const gfx_image image)
+{
+	return image ? image->size : 0;
+}

@@ -45,6 +45,8 @@ gfx_image gfx_image_new(const int width, const int height, const int depth, cons
 gfx_result gfx_image_delete(gfx_image* image);
 gfx_result gfx_image_copy_from_memory(gfx_image image, const char* data);
 gfx_result gfx_image_copy_from_texture(gfx_image image, const gfx_texture texture);
+unsigned char* gfx_image_get_data(const gfx_image image);
+int gfx_image_get_size(const gfx_image image);
 
 gfx_texture gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char* data);
 gfx_result gfx_texture_delete(gfx_texture* texture);
