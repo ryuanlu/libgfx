@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "image.h"
 #include "framebuffer.h"
+#include "context.h"
 
 GLenum gfx_get_gl_format(const gfx_pixel_format format)
 {
@@ -177,11 +178,13 @@ gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture)
 	return GFX_SUCCESS;
 }
 
-gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_framebuffer framebuffer, const gfx_fb_attachment target)
+gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_attachment target)
 {
+	GLuint tmpfbo;
 	GLenum attach;
 	GLuint object;
 	GLenum buffer_bit;
+	gfx_framebuffer framebuffer = gfx_current_context->current_framebuffer;
 
 	if(!texture || !framebuffer)
 		return GFX_ERROR;
@@ -189,23 +192,27 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fram
 	switch(target)
 	{
 	case GFX_ATTACH_COLOR_BUFFER:
+		object = framebuffer->bind_color_buffer;
 		attach = GL_COLOR_ATTACHMENT0;
 		buffer_bit = GL_COLOR_BUFFER_BIT;
-		object = framebuffer->bind_color_buffer;
 		break;
 	case GFX_ATTACH_DEPTH_BUFFER:
-		attach = GL_DEPTH_ATTACHMENT;
 		object = framebuffer->bind_depth_buffer;
+		attach = GL_DEPTH_ATTACHMENT;
 		buffer_bit = GL_DEPTH_BUFFER_BIT;
 		break;
 	default:
 		break;
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->fbo);
-	glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, attach, GL_TEXTURE_2D, object);
-	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, attach, GL_TEXTURE_2D, texture->object);
-	glBlitFramebuffer(0, 0, framebuffer->width - 1, framebuffer->height - 1, 0, 0, texture->width - 1, texture->height - 1, buffer_bit, GL_LINEAR);
+	glGenFramebuffers(1, &tmpfbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, tmpfbo);
+	glFramebufferTexture(GL_DRAW_FRAMEBUFFER, attach, texture->object, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer->fbo);
+	glBlitFramebuffer(0, 0, framebuffer->width, framebuffer->height, 0, 0, texture->width, texture->height, buffer_bit, GL_LINEAR);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->fbo);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &tmpfbo);
 
 	return GFX_SUCCESS;
 }

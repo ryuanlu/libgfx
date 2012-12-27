@@ -5,6 +5,7 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 #endif
+#include "framebuffer.h"
 
 struct gfx_context
 {
@@ -12,9 +13,12 @@ struct gfx_context
 	Display* display;
 	GLXContext opengl_context;
 #endif
-	GLuint fbo;
+	gfx_framebuffer current_framebuffer;
 
 };
 
+#pragma GCC visibility push(hidden)
+extern gfx_context gfx_current_context;
+#pragma GCC visibility pop
 
 #endif /* CONTEXT_H_ */

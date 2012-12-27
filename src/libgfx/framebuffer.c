@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <GL/glew.h>
 #include "gfx.h"
+#include "context.h"
 #include "framebuffer.h"
 #include "image.h"
 #include "texture.h"
@@ -36,8 +37,10 @@ gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx
 	else glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 
 
-	gfx_framebuffer_attach_texture(fb, GFX_ATTACH_COLOR_BUFFER, NULL);
-	gfx_framebuffer_attach_texture(fb, GFX_ATTACH_DEPTH_BUFFER, NULL);
+	gfx_framebuffer_bind(fb);
+	gfx_framebuffer_attach_texture(GFX_ATTACH_COLOR_BUFFER, NULL);
+	gfx_framebuffer_attach_texture(GFX_ATTACH_DEPTH_BUFFER, NULL);
+	gfx_framebuffer_bind(gfx_current_context->current_framebuffer);
 
 	return fb;
 }
@@ -46,6 +49,8 @@ gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx
 {
 	GLenum attach;
 	GLuint object;
+
+	gfx_framebuffer framebuffer = gfx_current_context->current_framebuffer;
 
 	if(!framebuffer || target >= GFX_NUMBER_OF_ATTACH_DEPTH_BUFFER || target < 0)
 		return GFX_ERROR;
@@ -83,6 +88,7 @@ gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx
 gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer ? framebuffer->fbo : 0);
+	gfx_current_context->current_framebuffer = framebuffer;
 
 	return GFX_SUCCESS;
 }

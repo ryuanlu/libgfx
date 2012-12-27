@@ -8,7 +8,7 @@
 #include "context.h"
 
 
-static gfx_context current_context = NULL;
+gfx_context gfx_current_context = NULL;
 static int glewInitialized = 0;
 
 #ifdef GFX_GLX_BUILD
@@ -100,12 +100,11 @@ gfx_result gfx_context_delete(gfx_context* context)
 {
 	if(!context||!*context) return GFX_ERROR;
 
-	glDeleteFramebuffers(1, &(*context)->fbo);
 #ifdef GFX_GLX_BUILD
 	destroy_glx_render_context((*context)->display, (*context)->opengl_context);
 #endif
-	if(*context == current_context)
-		current_context = NULL;
+	if(*context == gfx_current_context)
+		gfx_current_context = NULL;
 	free(*context);
 	*context = NULL;
 
@@ -119,19 +118,19 @@ gfx_result gfx_context_make_current(const gfx_context context)
 
 	if(!context)
 	{
-		if(current_context)
+		if(gfx_current_context)
 #ifdef GFX_GLX_BUILD
-			ret = glXMakeCurrent(current_context->display, None, NULL);
+			ret = glXMakeCurrent(gfx_current_context->display, None, NULL);
 #endif
 	}
 
-	if(current_context != context)
+	if(gfx_current_context != context)
 	{
 #ifdef GFX_GLX_BUILD
 		ret = glXMakeCurrent(context->display, XRootWindow(context->display, 0), context->opengl_context);
 #endif
 		if(ret)
-			current_context = context;
+			gfx_current_context = context;
 	}
 
 	return ret ? GFX_SUCCESS : GFX_ERROR;
