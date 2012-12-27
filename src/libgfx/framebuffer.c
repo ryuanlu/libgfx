@@ -50,22 +50,21 @@ gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx
 	if(!framebuffer || target >= GFX_NUMBER_OF_ATTACH_DEPTH_BUFFER || target < 0)
 		return GFX_ERROR;
 
-	if(texture && (framebuffer->width != texture->width || framebuffer->height != texture->height))
-		return GFX_ERROR;
-
-	if(texture->target != GL_TEXTURE_2D)
+	if(texture && (framebuffer->width != texture->width || framebuffer->height != texture->height || texture->target != GL_TEXTURE_2D))
 		return GFX_ERROR;
 
 	switch(target)
 	{
 	case GFX_ATTACH_COLOR_BUFFER:
-		attach = GL_COLOR_ATTACHMENT0;
 		framebuffer->bind_color_buffer = (texture == NULL ? framebuffer->builtin_color_buffer : texture->object);
+		framebuffer->bind_color_buffer_type = (texture == NULL ? GFX_FRAMEBUFFER_BIND_RENDERBUFFER : GFX_FRAMEBUFFER_BIND_TEXTURE);
+		attach = GL_COLOR_ATTACHMENT0;
 		object = framebuffer->bind_color_buffer;
 		break;
 	case GFX_ATTACH_DEPTH_BUFFER:
-		attach = GL_DEPTH_ATTACHMENT;
 		framebuffer->bind_depth_buffer = (texture == NULL ? framebuffer->builtin_depth_buffer : texture->object);
+		framebuffer->bind_depth_buffer_type = (texture == NULL ? GFX_FRAMEBUFFER_BIND_RENDERBUFFER : GFX_FRAMEBUFFER_BIND_TEXTURE);
+		attach = GL_DEPTH_ATTACHMENT;
 		object = framebuffer->bind_depth_buffer;
 		break;
 	default:
@@ -73,7 +72,10 @@ gfx_result gfx_framebuffer_attach_texture(gfx_framebuffer framebuffer, const gfx
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->fbo);
-	glFramebufferTexture(GL_DRAW_FRAMEBUFFER, attach, GL_TEXTURE_2D, object);
+
+	if(!texture)
+		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, attach, GL_RENDERBUFFER, object);
+	else	glFramebufferTexture(GL_DRAW_FRAMEBUFFER, attach, object, 0);
 
 	return GFX_SUCCESS;
 }
