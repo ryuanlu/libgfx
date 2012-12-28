@@ -94,3 +94,23 @@ int gfx_image_get_size(const gfx_image image)
 {
 	return image ? image->size : 0;
 }
+
+void gfx_image_draw_pango_markup(gfx_image image, const int x, const int y, const char* markup)
+{
+	if(!image)
+		return;
+	if(image->format != GFX_PIXELFORMAT_BGRA32)
+		return;
+	if(!image->cairo_surface)
+		image->cairo_surface = cairo_image_surface_create_for_data(image->data, CAIRO_FORMAT_ARGB32, image->width, image->height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, image->width));
+	if(!image->cairo_context)
+		image->cairo_context = cairo_create(image->cairo_surface);
+	if(!image->text_layout)
+		image->text_layout = pango_cairo_create_layout(image->cairo_context);
+
+	cairo_set_source_rgba(image->cairo_context, 1.0, 1.0, 1.0, 1.0);
+	cairo_translate(image->cairo_context, x, y);
+	pango_layout_set_markup(image->text_layout, markup, -1);
+	pango_cairo_show_layout(image->cairo_context, image->text_layout);
+
+}
