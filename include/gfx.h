@@ -71,5 +71,10 @@ gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const 
 gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer);
 void gfx_framebuffer_clear(const float red, const float green, const float blue, const float alpha, const gfx_fb_clear_target target);
 
+#ifdef GFX_GLX_BUILD
+#include <X11/Xlib.h>
+void gfx_glx_blit_framebuffer(const gfx_framebuffer framebuffer, const Window window);
+#endif
+
 
 #endif /* GFX_H_ */

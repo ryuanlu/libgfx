@@ -67,6 +67,21 @@ static void destroy_glx_render_context(Display* display, GLXContext context)
 	XCloseDisplay(display);
 }
 
+void gfx_glx_blit_framebuffer(const gfx_framebuffer framebuffer, const Window window)
+{
+	glXMakeCurrent(gfx_current_context->display, window, gfx_current_context->opengl_context);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer->fbo);
+
+	glBlitFramebuffer(0, 0, framebuffer->width, framebuffer->height, 0, 0, framebuffer->width, framebuffer->height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gfx_current_context->current_framebuffer->fbo);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+	glXSwapBuffers(gfx_current_context->display, window);
+	gfx_context_make_current(gfx_current_context);
+}
+
 #endif
 
 gfx_context gfx_context_new(const gfx_context sharelist)
