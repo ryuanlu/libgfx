@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
 	out = gfx_image_new(640, 480, 0, GFX_PIXELFORMAT_BGRA32, NULL);
 	gfx_image_copy_from_texture(out, tex);
-	gfx_image_draw_pango_markup(out, 10, 10, "<span font='Sans 24'>Pangoのことが</span><span font='Sans 24' color='red'><b>大好</b></span><span font='Sans 24'>きです</span>");
+	gfx_image_draw_pango_markup(out, 10, 10, 100, 1, "<span font='Sans 24'>Pangoのことが</span><span font='Sans 24' color='red'><b>大好</b></span><span font='Sans 24'>きです</span>");
 
 	img = gfx_image_new(640, 480, 0, GFX_PIXELFORMAT_RGBA32, NULL);
 	gfx_texture_copy_from_image(tex, out, 0, 0, 0);

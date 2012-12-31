@@ -95,7 +95,7 @@ int gfx_image_get_size(const gfx_image image)
 	return image ? image->size : 0;
 }
 
-void gfx_image_draw_pango_markup(gfx_image image, const int x, const int y, const char* markup)
+void gfx_image_draw_pango_markup(gfx_image image, const int x, const int y, const int width, const int wrapping, const char* markup)
 {
 	if(!image)
 		return;
@@ -112,6 +112,7 @@ void gfx_image_draw_pango_markup(gfx_image image, const int x, const int y, cons
 	cairo_scale(image->cairo_context, 1.0, -1.0);
 	cairo_translate(image->cairo_context, x, -y);
 	pango_layout_set_markup(image->text_layout, markup, -1);
+	pango_layout_set_width(image->text_layout, wrapping ? width * PANGO_SCALE : -1);
 	pango_cairo_show_layout(image->cairo_context, image->text_layout);
 	cairo_translate(image->cairo_context, -x, y);
 	cairo_scale(image->cairo_context, 1.0, -1.0);
