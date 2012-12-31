@@ -1,5 +1,5 @@
 TEST_BINARY:=$(patsubst %.c,%,$(wildcard *.c))
-TEST_LDFLAGS:=-I../../include -L../libgfx -lgfx -g
+TEST_LDFLAGS:=-I../../include -L../libgfx -lgfx `pkg-config --libs --cflags gtk+-2.0` -g 
 
 all: $(TEST_BINARY)
 
