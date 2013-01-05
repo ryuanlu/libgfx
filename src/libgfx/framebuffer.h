@@ -2,16 +2,17 @@
 #define FRAMEBUFFER_H_
 
 #include "gfx.h"
-
+#include "texture.h"
 
 struct gfx_framebuffer
 {
 	GLuint fbo;
 
 	GLuint builtin_color_buffer;
-	GLuint bind_color_buffer;
+	gfx_texture bind_color_texture;
+
 	GLuint builtin_depth_buffer;
-	GLuint bind_depth_buffer;
+	gfx_texture bind_depth_texture;
 
 	int width;
 	int height;

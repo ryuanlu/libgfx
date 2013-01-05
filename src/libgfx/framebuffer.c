@@ -3,7 +3,6 @@
 #include "gfx.h"
 #include "context.h"
 #include "framebuffer.h"
-#include "image.h"
 #include "texture.h"
 
 gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples)
@@ -49,8 +48,8 @@ gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer)
 {
 	gfx_framebuffer fb = *framebuffer;
 
-	glDeleteRenderbuffers(1, &fb->bind_color_buffer);
-	glDeleteRenderbuffers(1, &fb->bind_depth_buffer);
+	glDeleteRenderbuffers(1, &fb->builtin_color_buffer);
+	glDeleteRenderbuffers(1, &fb->builtin_depth_buffer);
 	glDeleteFramebuffers(1, &fb->fbo);
 
 	free(fb);
@@ -75,14 +74,14 @@ gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const 
 	switch(target)
 	{
 	case GFX_ATTACH_COLOR_BUFFER:
-		framebuffer->bind_color_buffer = (texture == NULL ? framebuffer->builtin_color_buffer : texture->object);
+		framebuffer->bind_color_texture = texture;
 		attach = GL_COLOR_ATTACHMENT0;
-		object = framebuffer->bind_color_buffer;
+		object = (texture == NULL) ? framebuffer->builtin_color_buffer : framebuffer->bind_color_texture->object;
 		break;
 	case GFX_ATTACH_DEPTH_BUFFER:
-		framebuffer->bind_depth_buffer = (texture == NULL ? framebuffer->builtin_depth_buffer : texture->object);
+		framebuffer->bind_depth_texture = texture;
 		attach = GL_DEPTH_ATTACHMENT;
-		object = framebuffer->bind_depth_buffer;
+		object = (texture == NULL) ? framebuffer->builtin_depth_buffer : framebuffer->bind_depth_texture->object;
 		break;
 	default:
 		break;
@@ -112,4 +111,10 @@ void gfx_framebuffer_clear(const float red, const float green, const float blue,
 	mask |= (target & GFX_CLEAR_COLOR_BUFFER) ? GL_COLOR_BUFFER_BIT : 0;
 	mask |= (target & GFX_CLEAR_DEPTH_BUFFER) ? GL_DEPTH_BUFFER_BIT : 0;
 	glClear(mask);
+
+	if(gfx_current_context->current_framebuffer->bind_color_texture && (target & GFX_CLEAR_COLOR_BUFFER))
+		gfx_current_context->current_framebuffer->bind_color_texture->modified = 1;
+	if(gfx_current_context->current_framebuffer->bind_depth_texture && (target & GFX_CLEAR_DEPTH_BUFFER))
+		gfx_current_context->current_framebuffer->bind_depth_texture->modified = 1;
+
 }

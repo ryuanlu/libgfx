@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <GL/glew.h>
 #include "texture.h"
-#include "image.h"
 #include "framebuffer.h"
 #include "context.h"
 
@@ -58,10 +57,21 @@ GLenum gfx_get_gl_data_type(const gfx_pixel_format format)
 	}
 }
 
+static int sizeof_pixel(gfx_pixel_format format)
+{
+	int pixelsize_table[] =
+	{
+		4, 3, 2, 1, 4, 3, 4, 4, 2, 1, 0
+	};
+
+	return gfx_is_valid_pixel_format(format) ? pixelsize_table[format]: 0;
+}
+
 gfx_texture gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char* data)
 {
 	GLenum texture_target = GL_TEXTURE_1D;
 	gfx_texture texture = NULL;
+	int width_in_bytes;
 
 	if(!gfx_is_valid_pixel_format(format) || width <= 0)
 		return NULL;
@@ -77,6 +87,11 @@ gfx_texture gfx_texture_new(const int width, const int height, const int depth, 
 	texture->width = width;
 	texture->height = (height < 1) ? 1 : height;
 	texture->depth = (depth < 1) ? 1 : depth;
+	texture->format = format;
+
+	width_in_bytes = width * sizeof_pixel(format);
+	texture->stride_size = width_in_bytes + ((width_in_bytes % 4) ? 4 - (width_in_bytes % 4) : 0);
+	texture->size = texture->stride_size * texture->height * texture->depth;
 
 	glGenTextures(1, &texture->object);
 	gfx_texture_bind(0, texture);
@@ -97,7 +112,6 @@ gfx_texture gfx_texture_new(const int width, const int height, const int depth, 
 	glTexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-
 	return texture;
 }
 
@@ -112,44 +126,62 @@ gfx_result gfx_texture_delete(gfx_texture* texture)
 
 	glDeleteTextures(1, &target->object);
 
+	if(target->pango_layout)
+		g_object_unref(target->pango_layout);
+	if(target->cairo_context)
+		cairo_destroy(target->cairo_context);
+	if(target->cairo_surface)
+		cairo_surface_destroy(target->cairo_surface);
+	if(target->data)
+		free(target->data);
+
 	free(target);
 	*texture = NULL;
 
 	return GFX_SUCCESS;
 }
 
-gfx_texture gfx_texture_new_from_image(const gfx_image image)
+void gfx_texture_upload(gfx_texture texture, const gfx_pixel_format format, const unsigned char* data)
 {
-	gfx_texture texture = NULL;
-	if(!image)
-		return NULL;
-
-	texture = gfx_texture_new(image->width, image->height, image->depth, image->format, image->data);
-
-	return texture;
-}
-
-gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image, const int offset_x, const int offset_y, const int offset_z)
-{
-	if(!texture || !image)
-		return GFX_ERROR;
+	if(!texture)
+		return;
 
 	gfx_texture_bind(0, texture);
 
 	switch(texture->target)
 	{
 	case GL_TEXTURE_1D:
-		glTexSubImage1D(texture->target, 0, offset_x, image->width, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+		glTexSubImage1D(texture->target, 0, 0, texture->width, gfx_get_gl_format(format), gfx_get_gl_data_type(format), data);
 		break;
 	case GL_TEXTURE_2D:
-		glTexSubImage2D(texture->target, 0, offset_x, offset_y, image->width, image->height, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+		glTexSubImage2D(texture->target, 0, 0, 0, texture->width, texture->height, gfx_get_gl_format(format), gfx_get_gl_data_type(format), data);
 		break;
 	case GL_TEXTURE_3D:
-		glTexSubImage3D(texture->target, 0, offset_x, offset_y, offset_z, image->width, image->height, image->depth, gfx_get_gl_format(image->format), gfx_get_gl_data_type(image->format), image->data);
+		glTexSubImage3D(texture->target, 0, 0, 0, 0, texture->width, texture->height, texture->depth, gfx_get_gl_format(format), gfx_get_gl_data_type(format), data);
 		break;
 	}
 
-	return GFX_SUCCESS;
+	return;
+}
+
+void gfx_texture_download(gfx_texture texture)
+{
+	if(!texture)
+		return;
+
+	if(!texture->data)
+	{
+		texture->data = calloc(1, texture->size);
+		texture->modified = 1;
+	}
+
+	if(!texture->modified)
+		return;
+
+	glBindTexture(texture->target, texture->object);
+	glGetTexImage(texture->target, 0, gfx_get_gl_format(texture->format), gfx_get_gl_data_type(texture->format), texture->data);
+
+	texture->modified = 0;
 }
 
 gfx_result gfx_texture_generate_mipmaps(gfx_texture texture)
@@ -192,12 +224,12 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_a
 	switch(target)
 	{
 	case GFX_ATTACH_COLOR_BUFFER:
-		object = framebuffer->bind_color_buffer;
+		object = framebuffer->bind_color_texture->object;
 		attach = GL_COLOR_ATTACHMENT0;
 		buffer_bit = GL_COLOR_BUFFER_BIT;
 		break;
 	case GFX_ATTACH_DEPTH_BUFFER:
-		object = framebuffer->bind_depth_buffer;
+		object = framebuffer->bind_depth_texture->object;
 		attach = GL_DEPTH_ATTACHMENT;
 		buffer_bit = GL_DEPTH_BUFFER_BIT;
 		break;
@@ -215,4 +247,32 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_a
 	glDeleteFramebuffers(1, &tmpfbo);
 
 	return GFX_SUCCESS;
+}
+
+void gfx_texture_draw_pango_markup(gfx_texture texture, const int x, const int y, const int width, const int wrapping, const char* markup)
+{
+	if(!texture)
+		return;
+	if(texture->format != GFX_PIXELFORMAT_BGRA32)
+		return;
+
+	gfx_texture_download(texture);
+
+	if(!texture->cairo_surface)
+		texture->cairo_surface = cairo_image_surface_create_for_data(texture->data, CAIRO_FORMAT_ARGB32, texture->width, texture->height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, texture->width));
+	if(!texture->cairo_context)
+		texture->cairo_context = cairo_create(texture->cairo_surface);
+	if(!texture->pango_layout)
+		texture->pango_layout = pango_cairo_create_layout(texture->cairo_context);
+
+	cairo_set_source_rgba(texture->cairo_context, 1.0, 1.0, 1.0, 1.0);
+	cairo_scale(texture->cairo_context, 1.0, -1.0);
+	cairo_translate(texture->cairo_context, x, -y);
+	pango_layout_set_markup(texture->pango_layout, markup, -1);
+	pango_layout_set_width(texture->pango_layout, wrapping ? width * PANGO_SCALE : -1);
+	pango_cairo_show_layout(texture->cairo_context, texture->pango_layout);
+	cairo_translate(texture->cairo_context, -x, y);
+	cairo_scale(texture->cairo_context, 1.0, -1.0);
+
+	gfx_texture_upload(texture, texture->format, texture->data);
 }

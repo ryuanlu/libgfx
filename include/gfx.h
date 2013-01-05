@@ -48,22 +48,12 @@ gfx_context gfx_context_new(const gfx_context sharelist);
 gfx_result gfx_context_delete(gfx_context* context);
 gfx_result gfx_context_make_current(const gfx_context context);
 
-gfx_image gfx_image_new(const int width, const int height, const int depth, const gfx_pixel_format format, unsigned char* data);
-gfx_result gfx_image_delete(gfx_image* image);
-gfx_result gfx_image_copy_from_memory(gfx_image image, const char* data);
-gfx_result gfx_image_copy_from_texture(gfx_image image, const gfx_texture texture);
-unsigned char* gfx_image_get_data(const gfx_image image);
-int gfx_image_get_size(const gfx_image image);
-void gfx_image_draw_pango_markup(gfx_image image, const int x, const int y, const int width, const int wrapping, const char* markup);
-
-
 gfx_texture gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char* data);
 gfx_result gfx_texture_delete(gfx_texture* texture);
-gfx_texture gfx_texture_new_from_image(const gfx_image image);
-gfx_result gfx_texture_copy_from_image(gfx_texture texture, const gfx_image image, const int offset_x, const int offset_y, const int offset_z);
 gfx_result gfx_texture_generate_mipmaps(gfx_texture texture);
 gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture);
 gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_attachment target);
+void gfx_texture_draw_pango_markup(gfx_texture texture, const int x, const int y, const int width, const int wrapping, const char* markup);
 
 gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples);
 gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer);

@@ -10,12 +10,12 @@ GtkWidget* canvas = NULL;
 int glcanvas_handler(GtkWidget *widget, GdkEvent *event)
 {
 	gfx_glx_blit_framebuffer(fb, GDK_DRAWABLE_XID(canvas->window));
+	return 0;
 }
 
 int main(int argc, char **argv)
 {
 	gfx_context ctx = NULL;
-	gfx_image img = NULL;
 	gfx_texture tex = NULL;
 	GtkWidget* window = NULL;
 	FILE* fp;
@@ -44,23 +44,18 @@ int main(int argc, char **argv)
 	gfx_framebuffer_bind(fb);
 	tex = gfx_texture_new(640, 480, 0, GFX_PIXELFORMAT_BGRA32, NULL);
 	gfx_framebuffer_attach_texture(GFX_ATTACH_COLOR_BUFFER, tex);
-	gfx_framebuffer_clear(0.0f, 0.0f, 1.0f, 1.0f, GFX_CLEAR_COLOR_BUFFER);
 
-	img = gfx_image_new(640, 480, 0, GFX_PIXELFORMAT_BGRA32, NULL);
-	gfx_image_copy_from_texture(img, tex);
-	gfx_image_draw_pango_markup(img, 0, 200, 100, 1, "<span font='Sans 24'>あいうえお</span>");
-	gfx_image_draw_pango_markup(img, 0, 100, 100, 0, "<span font='Sans 24'>あいうえお</span>");
-	gfx_texture_copy_from_image(tex, img, 0, 0, 0);
+	gfx_framebuffer_clear(0.0f, 0.0f, 1.0f, 1.0f, GFX_CLEAR_COLOR_BUFFER);
+	gfx_texture_draw_pango_markup(tex, 0, 200, 100, 1, "<span font='Sans 24'>あいうえお</span>");
+	gfx_texture_draw_pango_markup(tex, 0, 100, 100, 0, "<span font='Sans 24'>あいうえお</span>");
 
 	g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 	g_signal_connect(canvas, "expose-event", G_CALLBACK(glcanvas_handler), NULL);
 
 	gtk_main();
 
-
 	/* Release resource */
 
-	gfx_image_delete(&img);
 	gfx_texture_delete(&tex);
 	gfx_framebuffer_delete(&fb);
 	gfx_context_delete(&ctx);
