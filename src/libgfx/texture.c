@@ -266,13 +266,13 @@ void gfx_texture_draw_pango_markup(gfx_texture texture, const int x, const int y
 		texture->pango_layout = pango_cairo_create_layout(texture->cairo_context);
 
 	cairo_set_source_rgba(texture->cairo_context, 1.0, 1.0, 1.0, 1.0);
+	cairo_translate(texture->cairo_context, x, y);
 	cairo_scale(texture->cairo_context, 1.0, -1.0);
-	cairo_translate(texture->cairo_context, x, -y);
 	pango_layout_set_markup(texture->pango_layout, markup, -1);
 	pango_layout_set_width(texture->pango_layout, wrapping ? width * PANGO_SCALE : -1);
 	pango_cairo_show_layout(texture->cairo_context, texture->pango_layout);
-	cairo_translate(texture->cairo_context, -x, y);
 	cairo_scale(texture->cairo_context, 1.0, -1.0);
+	cairo_translate(texture->cairo_context, -x, -y);
 
 	gfx_texture_upload(texture, texture->format, texture->data);
 }
