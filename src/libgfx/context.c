@@ -8,11 +8,11 @@
 #include "context.h"
 
 
-gfx_context gfx_current_context = NULL;
+gfx_context *gfx_current_context = NULL;
 static int glewInitialized = 0;
 
 #ifdef GFX_GLX_BUILD
-static void create_glx_render_context(GLXContext* context, Display** display, GLXContext sharelist)
+static void create_glx_render_context(GLXContext *context, Display **display, GLXContext sharelist)
 {
 
 	int visual_attr[] = {	GLX_RGBA,
@@ -28,10 +28,10 @@ static void create_glx_render_context(GLXContext* context, Display** display, GL
 	int nitems;
 
 	Window window;
-	XVisualInfo* vi = NULL;
+	XVisualInfo *vi = NULL;
 	GLXContext rc = NULL;
 	GLXContext newrc = NULL;
-	GLXFBConfig* fbconfig = NULL;
+	GLXFBConfig *fbconfig = NULL;
 
 	*display = XOpenDisplay(NULL);
 	window = XRootWindow(*display, 0);
@@ -61,13 +61,13 @@ static void create_glx_render_context(GLXContext* context, Display** display, GL
 	*context = newrc;
 }
 
-static void destroy_glx_render_context(Display* display, GLXContext context)
+static void destroy_glx_render_context(Display *display, GLXContext context)
 {
 	glXDestroyContext(display, context);
 	XCloseDisplay(display);
 }
 
-void gfx_glx_blit_framebuffer(const gfx_framebuffer framebuffer, const Window window)
+void gfx_glx_blit_framebuffer(const gfx_framebuffer *framebuffer, const Window window)
 {
 	glXMakeCurrent(gfx_current_context->display, window, gfx_current_context->opengl_context);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -84,9 +84,9 @@ void gfx_glx_blit_framebuffer(const gfx_framebuffer framebuffer, const Window wi
 
 #endif
 
-gfx_context gfx_context_new(const gfx_context sharelist)
+gfx_context *gfx_context_new(const gfx_context *sharelist)
 {
-	gfx_context context = NULL;
+	gfx_context *context = NULL;
 
 	context = calloc(1, sizeof(struct gfx_context));
 
@@ -111,7 +111,7 @@ gfx_context gfx_context_new(const gfx_context sharelist)
 	return context;
 }
 
-gfx_result gfx_context_delete(gfx_context* context)
+gfx_result gfx_context_delete(gfx_context **context)
 {
 	if(!context||!*context) return GFX_ERROR;
 
@@ -127,7 +127,7 @@ gfx_result gfx_context_delete(gfx_context* context)
 }
 
 
-gfx_result gfx_context_make_current(const gfx_context context)
+gfx_result gfx_context_make_current(gfx_context *context)
 {
 	Bool ret = True;
 

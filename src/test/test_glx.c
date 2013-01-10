@@ -4,8 +4,8 @@
 #include <gdk/gdkx.h>
 #include "gfx.h"
 
-gfx_framebuffer fb = NULL;
-GtkWidget* canvas = NULL;
+gfx_framebuffer *fb = NULL;
+GtkWidget *canvas = NULL;
 
 int glcanvas_handler(GtkWidget *widget, GdkEvent *event)
 {
@@ -15,10 +15,10 @@ int glcanvas_handler(GtkWidget *widget, GdkEvent *event)
 
 int main(int argc, char **argv)
 {
-	gfx_context ctx = NULL;
-	gfx_texture tex = NULL;
-	GtkWidget* window = NULL;
-	FILE* fp;
+	gfx_context *ctx = NULL;
+	gfx_texture *tex = NULL;
+	GtkWidget *window = NULL;
+	FILE *fp;
 	int r;
 
 	/* Initialization */

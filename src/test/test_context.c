@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-	gfx_context ctx = NULL;
+	gfx_context *ctx = NULL;
 
 	gfx_init(&argc, &argv);
 	ctx = gfx_context_new(NULL);

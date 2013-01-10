@@ -9,10 +9,10 @@ struct gfx_framebuffer
 	GLuint fbo;
 
 	GLuint builtin_color_buffer;
-	gfx_texture bind_color_texture;
+	gfx_texture *bind_color_texture;
 
 	GLuint builtin_depth_buffer;
-	gfx_texture bind_depth_texture;
+	gfx_texture *bind_depth_texture;
 
 	int width;
 	int height;

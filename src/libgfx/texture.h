@@ -20,9 +20,9 @@ struct gfx_texture
 	unsigned char* data;
 	int modified;
 
-	cairo_surface_t* cairo_surface;
-	cairo_t* cairo_context;
-	PangoLayout* pango_layout;
+	cairo_surface_t *cairo_surface;
+	cairo_t *cairo_context;
+	PangoLayout *pango_layout;
 };
 
 #define gfx_is_valid_pixel_format(format) (format >= 0 && format < GFX_NUMBER_OF_PIXELFORMAT)

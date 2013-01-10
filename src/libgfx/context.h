@@ -10,15 +10,15 @@
 struct gfx_context
 {
 #ifdef GFX_GLX_BUILD
-	Display* display;
+	Display *display;
 	GLXContext opengl_context;
 #endif
-	gfx_framebuffer current_framebuffer;
+	gfx_framebuffer *current_framebuffer;
 
 };
 
 #pragma GCC visibility push(hidden)
-extern gfx_context gfx_current_context;
+extern gfx_context *gfx_current_context;
 #pragma GCC visibility pop
 
 #endif /* CONTEXT_H_ */

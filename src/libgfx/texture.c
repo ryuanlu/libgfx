@@ -67,10 +67,10 @@ static int sizeof_pixel(gfx_pixel_format format)
 	return gfx_is_valid_pixel_format(format) ? pixelsize_table[format]: 0;
 }
 
-gfx_texture gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char* data)
+gfx_texture *gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char *data)
 {
 	GLenum texture_target = GL_TEXTURE_1D;
-	gfx_texture texture = NULL;
+	gfx_texture *texture = NULL;
 	int width_in_bytes;
 
 	if(!gfx_is_valid_pixel_format(format) || width <= 0)
@@ -115,9 +115,9 @@ gfx_texture gfx_texture_new(const int width, const int height, const int depth, 
 	return texture;
 }
 
-gfx_result gfx_texture_delete(gfx_texture* texture)
+gfx_result gfx_texture_delete(gfx_texture **texture)
 {
-	gfx_texture target = NULL;
+	gfx_texture *target = NULL;
 
 	if(!texture||!*texture)
 		return GFX_ERROR;
@@ -141,7 +141,7 @@ gfx_result gfx_texture_delete(gfx_texture* texture)
 	return GFX_SUCCESS;
 }
 
-void gfx_texture_upload(gfx_texture texture, const gfx_pixel_format format, const unsigned char* data)
+void gfx_texture_upload(gfx_texture *texture, const gfx_pixel_format format, const unsigned char *data)
 {
 	if(!texture)
 		return;
@@ -164,7 +164,7 @@ void gfx_texture_upload(gfx_texture texture, const gfx_pixel_format format, cons
 	return;
 }
 
-void gfx_texture_download(gfx_texture texture)
+void gfx_texture_download(gfx_texture *texture)
 {
 	if(!texture)
 		return;
@@ -184,7 +184,7 @@ void gfx_texture_download(gfx_texture texture)
 	texture->modified = 0;
 }
 
-gfx_result gfx_texture_generate_mipmaps(gfx_texture texture)
+gfx_result gfx_texture_generate_mipmaps(gfx_texture *texture)
 {
 	if(texture->enabled_mipmaps)
 		return GFX_ERROR;
@@ -199,7 +199,7 @@ gfx_result gfx_texture_generate_mipmaps(gfx_texture texture)
 	return GFX_SUCCESS;
 }
 
-gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture)
+gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture *texture)
 {
 	if(texture_unit < 0 || texture_unit >= GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS)
 		return GFX_ERROR;
@@ -210,13 +210,13 @@ gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture texture)
 	return GFX_SUCCESS;
 }
 
-gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_attachment target)
+gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_attachment target)
 {
 	GLuint tmpfbo;
 	GLenum attach;
 	GLuint object;
 	GLenum buffer_bit;
-	gfx_framebuffer framebuffer = gfx_current_context->current_framebuffer;
+	gfx_framebuffer* framebuffer = gfx_current_context->current_framebuffer;
 
 	if(!texture || !framebuffer)
 		return GFX_ERROR;
@@ -249,7 +249,7 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture texture, const gfx_fb_a
 	return GFX_SUCCESS;
 }
 
-void gfx_texture_draw_pango_markup(gfx_texture texture, const int x, const int y, const int width, const int wrapping, const char* markup)
+void gfx_texture_draw_pango_markup(gfx_texture *texture, const int x, const int y, const int width, const int wrapping, const char *markup)
 {
 	if(!texture)
 		return;

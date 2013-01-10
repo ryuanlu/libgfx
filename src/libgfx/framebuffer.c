@@ -5,9 +5,9 @@
 #include "framebuffer.h"
 #include "texture.h"
 
-gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples)
+gfx_framebuffer *gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples)
 {
-	gfx_framebuffer fb = NULL;
+	gfx_framebuffer *fb = NULL;
 
 	if(width<1||height<1||!gfx_is_valid_pixel_format(format))
 		return NULL;
@@ -44,9 +44,9 @@ gfx_framebuffer gfx_framebuffer_new(const int width, const int height, const gfx
 	return fb;
 }
 
-gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer)
+gfx_result gfx_framebuffer_delete(gfx_framebuffer **framebuffer)
 {
-	gfx_framebuffer fb = *framebuffer;
+	gfx_framebuffer *fb = *framebuffer;
 
 	glDeleteRenderbuffers(1, &fb->builtin_color_buffer);
 	glDeleteRenderbuffers(1, &fb->builtin_depth_buffer);
@@ -58,12 +58,12 @@ gfx_result gfx_framebuffer_delete(gfx_framebuffer* framebuffer)
 	return GFX_SUCCESS;
 }
 
-gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const gfx_texture texture)
+gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, gfx_texture *texture)
 {
 	GLenum attach;
 	GLuint object;
 
-	gfx_framebuffer framebuffer = gfx_current_context->current_framebuffer;
+	gfx_framebuffer *framebuffer = gfx_current_context->current_framebuffer;
 
 	if(!framebuffer || target >= GFX_NUMBER_OF_ATTACH_DEPTH_BUFFER || target < 0)
 		return GFX_ERROR;
@@ -96,7 +96,7 @@ gfx_result gfx_framebuffer_attach_texture(const gfx_fb_attachment target, const 
 	return GFX_SUCCESS;
 }
 
-gfx_result gfx_framebuffer_bind(const gfx_framebuffer framebuffer)
+gfx_result gfx_framebuffer_bind(gfx_framebuffer *framebuffer)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer ? framebuffer->fbo : 0);
 	gfx_current_context->current_framebuffer = framebuffer;
