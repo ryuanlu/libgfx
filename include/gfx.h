@@ -38,7 +38,6 @@ typedef enum
 }gfx_fb_clear_target;
 
 typedef struct gfx_context* gfx_context;
-typedef struct gfx_image* gfx_image;
 typedef struct gfx_texture* gfx_texture;
 typedef struct gfx_framebuffer* gfx_framebuffer;
 
