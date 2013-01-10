@@ -67,16 +67,10 @@ static int sizeof_pixel(gfx_pixel_format format)
 	return gfx_is_valid_pixel_format(format) ? pixelsize_table[format]: 0;
 }
 
-gfx_texture *gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char *data)
+void gfx_texture_init(gfx_texture *texture, const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char *data)
 {
 	GLenum texture_target = GL_TEXTURE_1D;
-	gfx_texture *texture = NULL;
 	int width_in_bytes;
-
-	if(!gfx_is_valid_pixel_format(format) || width <= 0)
-		return NULL;
-
-	texture = calloc(1, sizeof(struct gfx_texture));
 
 	if(height > 1)
 		texture_target = GL_TEXTURE_2D;
@@ -111,6 +105,34 @@ gfx_texture *gfx_texture_new(const int width, const int height, const int depth,
 
 	glTexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+}
+
+void gfx_texture_deinit(gfx_texture *texture)
+{
+	if(!texture)
+		return;
+
+	glDeleteTextures(1, &texture->object);
+
+	if(texture->cairo_context)
+		cairo_destroy(texture->cairo_context);
+	if(texture->cairo_surface)
+		cairo_surface_destroy(texture->cairo_surface);
+	if(texture->data)
+		free(texture->data);
+
+}
+
+gfx_texture *gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char *data)
+{
+	gfx_texture *texture = NULL;
+
+	if(!gfx_is_valid_pixel_format(format) || width <= 0)
+		return NULL;
+
+	texture = calloc(1, sizeof(struct gfx_texture));
+
+	gfx_texture_init(texture, width, height, depth, format, data);
 
 	return texture;
 }
@@ -124,16 +146,7 @@ gfx_result gfx_texture_delete(gfx_texture **texture)
 
 	target = *texture;
 
-	glDeleteTextures(1, &target->object);
-
-	if(target->pango_layout)
-		g_object_unref(target->pango_layout);
-	if(target->cairo_context)
-		cairo_destroy(target->cairo_context);
-	if(target->cairo_surface)
-		cairo_surface_destroy(target->cairo_surface);
-	if(target->data)
-		free(target->data);
+	gfx_texture_deinit(target);
 
 	free(target);
 	*texture = NULL;
@@ -173,6 +186,14 @@ void gfx_texture_download(gfx_texture *texture)
 	{
 		texture->data = calloc(1, texture->size);
 		texture->modified = 1;
+	}
+
+	if(texture->format == GFX_PIXELFORMAT_BGRA32)
+	{
+		if(!texture->cairo_surface)
+			texture->cairo_surface = cairo_image_surface_create_for_data(texture->data, CAIRO_FORMAT_ARGB32, texture->width, texture->height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, texture->width));
+		if(!texture->cairo_context)
+			texture->cairo_context = cairo_create(texture->cairo_surface);
 	}
 
 	if(!texture->modified)
@@ -249,30 +270,12 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_
 	return GFX_SUCCESS;
 }
 
-void gfx_texture_draw_pango_markup(gfx_texture *texture, const int x, const int y, const int width, const int wrapping, const char *markup)
+cairo_t* gfx_texture_get_cairo_context(gfx_texture *texture)
 {
 	if(!texture)
-		return;
-	if(texture->format != GFX_PIXELFORMAT_BGRA32)
-		return;
+		return NULL;
 
 	gfx_texture_download(texture);
 
-	if(!texture->cairo_surface)
-		texture->cairo_surface = cairo_image_surface_create_for_data(texture->data, CAIRO_FORMAT_ARGB32, texture->width, texture->height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, texture->width));
-	if(!texture->cairo_context)
-		texture->cairo_context = cairo_create(texture->cairo_surface);
-	if(!texture->pango_layout)
-		texture->pango_layout = pango_cairo_create_layout(texture->cairo_context);
-
-	cairo_set_source_rgba(texture->cairo_context, 1.0, 1.0, 1.0, 1.0);
-	cairo_translate(texture->cairo_context, x, y);
-	cairo_scale(texture->cairo_context, 1.0, -1.0);
-	pango_layout_set_markup(texture->pango_layout, markup, -1);
-	pango_layout_set_width(texture->pango_layout, wrapping ? width * PANGO_SCALE : -1);
-	pango_cairo_show_layout(texture->cairo_context, texture->pango_layout);
-	cairo_scale(texture->cairo_context, 1.0, -1.0);
-	cairo_translate(texture->cairo_context, -x, -y);
-
-	gfx_texture_upload(texture, texture->format, texture->data);
+	return texture->cairo_context;
 }

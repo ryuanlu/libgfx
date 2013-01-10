@@ -1,6 +1,8 @@
 #ifndef GFX_H_
 #define GFX_H_
 
+#include <pango/pangocairo.h>
+
 typedef enum
 {
 	GFX_SUCCESS = 0,
@@ -39,6 +41,7 @@ typedef enum
 
 typedef struct gfx_context gfx_context;
 typedef struct gfx_texture gfx_texture;
+typedef struct gfx_text_layout gfx_text_layout;
 typedef struct gfx_framebuffer gfx_framebuffer;
 
 void gfx_init(int *argc, char ***argv);
@@ -52,7 +55,18 @@ gfx_result gfx_texture_delete(gfx_texture **texture);
 gfx_result gfx_texture_generate_mipmaps(gfx_texture *texture);
 gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture *texture);
 gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_attachment target);
-void gfx_texture_draw_pango_markup(gfx_texture *texture, const int x, const int y, const int width, const int wrapping, const char *markup);
+cairo_t* gfx_texture_get_cairo_context(gfx_texture *texture);
+
+gfx_text_layout *gfx_text_layout_new(const int width, const int height);
+void gfx_text_layout_delete(gfx_text_layout** textlayout);
+PangoLayout *gfx_text_layout_get_pango_layout(gfx_text_layout *textlayout);
+void gfx_text_layout_set_foreground(gfx_text_layout* textlayout, const float red, const float green, const float blue, const float alpha);
+void gfx_text_layout_set_background(gfx_text_layout* textlayout, const float red, const float green, const float blue, const float alpha);
+void gfx_text_layout_render(gfx_text_layout* textlayout);
+#define gfx_text_layout_set_alignment(textlayout,alignment) pango_layout_set_alignment(gfx_text_layout_get_pango_layout(textlayout),alignment)
+#define gfx_text_layout_set_line_spacing(textlayout, space) pango_layout_set_spacing(gfx_text_layout_get_pango_layout(textlayout), space * PANGO_SCALE)
+#define gfx_text_layout_set_indent(textlayout, indent) pango_layout_set_indent(gfx_text_layout_get_pango_layout(textlayout), indent * PANGO_SCALE)
+#define gfx_text_layout_set_pango_markup(textlayout, markup) pango_layout_set_markup(gfx_text_layout_get_pango_layout(textlayout), markup, -1)
 
 gfx_framebuffer *gfx_framebuffer_new(const int width, const int height, const gfx_pixel_format format, const int multisample, const int samples);
 gfx_result gfx_framebuffer_delete(gfx_framebuffer **framebuffer);

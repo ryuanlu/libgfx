@@ -16,9 +16,8 @@ int glcanvas_handler(GtkWidget *widget, GdkEvent *event)
 int main(int argc, char **argv)
 {
 	gfx_context *ctx = NULL;
-	gfx_texture *tex = NULL;
 	GtkWidget *window = NULL;
-	FILE *fp;
+	gfx_text_layout* text = NULL;
 	int r;
 
 	/* Initialization */
@@ -42,12 +41,17 @@ int main(int argc, char **argv)
 
 	fb = gfx_framebuffer_new(640, 480, GFX_PIXELFORMAT_BGRA32, 0, 0);
 	gfx_framebuffer_bind(fb);
-	tex = gfx_texture_new(640, 480, 0, GFX_PIXELFORMAT_BGRA32, NULL);
-	gfx_framebuffer_attach_texture(GFX_ATTACH_COLOR_BUFFER, tex);
+	text = gfx_text_layout_new(640, 480);
 
-	gfx_framebuffer_clear(0.0f, 0.0f, 1.0f, 1.0f, GFX_CLEAR_COLOR_BUFFER);
-	gfx_texture_draw_pango_markup(tex, 0, 200, 100, 1, "<span font='Sans 24'>あいうえお</span>");
-	gfx_texture_draw_pango_markup(tex, 0, 100, 100, 0, "<span font='Sans 24'>あいうえお</span>");
+	gfx_framebuffer_attach_texture(GFX_ATTACH_COLOR_BUFFER, (gfx_texture*)text);
+
+	gfx_text_layout_set_pango_markup(text, "<span font='Sans 32'>あいうえお\nかきくけこ</span>");
+	gfx_text_layout_set_background(text, 0.0, 0.0, 1.0, 1.0);
+	gfx_text_layout_set_foreground(text, 1.0, 1.0, 0.0, 1.0);
+	gfx_text_layout_set_alignment(text, PANGO_ALIGN_CENTER);
+	gfx_text_layout_set_indent(text, 100);
+	gfx_text_layout_set_line_spacing(text, 100);
+	gfx_text_layout_render(text);
 
 	g_signal_connect(window, "destroy", gtk_main_quit, NULL);
 	g_signal_connect(canvas, "expose-event", G_CALLBACK(glcanvas_handler), NULL);
@@ -56,7 +60,7 @@ int main(int argc, char **argv)
 
 	/* Release resource */
 
-	gfx_texture_delete(&tex);
+	gfx_text_layout_delete(&text);
 	gfx_framebuffer_delete(&fb);
 	gfx_context_delete(&ctx);
 
