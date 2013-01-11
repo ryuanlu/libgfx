@@ -237,7 +237,7 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_
 	GLenum attach;
 	GLuint object;
 	GLenum buffer_bit;
-	gfx_framebuffer* framebuffer = gfx_current_context->current_framebuffer;
+	gfx_framebuffer *framebuffer = gfx_current_context->current_framebuffer;
 
 	if(!texture || !framebuffer)
 		return GFX_ERROR;
