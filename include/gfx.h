@@ -55,14 +55,14 @@ gfx_result gfx_texture_delete(gfx_texture **texture);
 gfx_result gfx_texture_generate_mipmaps(gfx_texture *texture);
 gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture *texture);
 gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_attachment target);
-cairo_t* gfx_texture_get_cairo_context(gfx_texture *texture);
+cairo_t *gfx_texture_get_cairo_context(gfx_texture *texture);
 
 gfx_text_layout *gfx_text_layout_new(const int width, const int height);
-void gfx_text_layout_delete(gfx_text_layout** textlayout);
+void gfx_text_layout_delete(gfx_text_layout **textlayout);
 PangoLayout *gfx_text_layout_get_pango_layout(gfx_text_layout *textlayout);
-void gfx_text_layout_set_foreground(gfx_text_layout* textlayout, const float red, const float green, const float blue, const float alpha);
-void gfx_text_layout_set_background(gfx_text_layout* textlayout, const float red, const float green, const float blue, const float alpha);
-void gfx_text_layout_render(gfx_text_layout* textlayout);
+void gfx_text_layout_set_foreground(gfx_text_layout *textlayout, const float red, const float green, const float blue, const float alpha);
+void gfx_text_layout_set_background(gfx_text_layout *textlayout, const float red, const float green, const float blue, const float alpha);
+void gfx_text_layout_render(gfx_text_layout *textlayout);
 #define gfx_text_layout_set_alignment(textlayout,alignment) pango_layout_set_alignment(gfx_text_layout_get_pango_layout(textlayout),alignment)
 #define gfx_text_layout_set_line_spacing(textlayout, space) pango_layout_set_spacing(gfx_text_layout_get_pango_layout(textlayout), space * PANGO_SCALE)
 #define gfx_text_layout_set_indent(textlayout, indent) pango_layout_set_indent(gfx_text_layout_get_pango_layout(textlayout), indent * PANGO_SCALE)

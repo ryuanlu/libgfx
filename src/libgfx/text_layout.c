@@ -15,9 +15,9 @@ struct gfx_text_layout
 	}foreground_color, background_color;
 };
 
-void gfx_text_layout_init(gfx_text_layout* textlayout, const int width, const int height)
+void gfx_text_layout_init(gfx_text_layout *textlayout, const int width, const int height)
 {
-	gfx_texture* texture = &(textlayout->_gfx_texture);
+	gfx_texture *texture = &(textlayout->_gfx_texture);
 	gfx_texture_init(texture, width, height, 1, GFX_PIXELFORMAT_BGRA32, NULL);
 	gfx_texture_download(texture);
 	textlayout->pango_layout = pango_cairo_create_layout(texture->cairo_context);
@@ -36,7 +36,7 @@ void gfx_text_layout_init(gfx_text_layout* textlayout, const int width, const in
 	pango_layout_set_height(textlayout->pango_layout, height * PANGO_SCALE);
 }
 
-void gfx_text_layout_deinit(gfx_text_layout* textlayout)
+void gfx_text_layout_deinit(gfx_text_layout *textlayout)
 {
 	if(!textlayout)
 		return;
@@ -58,9 +58,9 @@ gfx_text_layout *gfx_text_layout_new(const int width, const int height)
 	return textlayout;
 }
 
-void gfx_text_layout_delete(gfx_text_layout** textlayout)
+void gfx_text_layout_delete(gfx_text_layout **textlayout)
 {
-	gfx_text_layout* target;
+	gfx_text_layout *target;
 	if(!textlayout||!*textlayout)
 		return;
 
@@ -70,9 +70,9 @@ void gfx_text_layout_delete(gfx_text_layout** textlayout)
 	*textlayout = NULL;
 }
 
-void gfx_text_layout_render(gfx_text_layout* textlayout)
+void gfx_text_layout_render(gfx_text_layout *textlayout)
 {
-	gfx_texture* texture = &(textlayout->_gfx_texture);
+	gfx_texture *texture = &(textlayout->_gfx_texture);
 
 	cairo_identity_matrix(texture->cairo_context);
 	cairo_translate(texture->cairo_context, 0, texture->height);

@@ -270,7 +270,7 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_
 	return GFX_SUCCESS;
 }
 
-cairo_t* gfx_texture_get_cairo_context(gfx_texture *texture)
+cairo_t *gfx_texture_get_cairo_context(gfx_texture *texture)
 {
 	if(!texture)
 		return NULL;

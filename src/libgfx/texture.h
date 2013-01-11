@@ -17,7 +17,7 @@ struct gfx_texture
 	int stride_size;
 	int size;
 	gfx_pixel_format format;
-	unsigned char* data;
+	unsigned char *data;
 	int modified;
 
 	cairo_surface_t *cairo_surface;
