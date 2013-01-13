@@ -33,7 +33,7 @@ GLenum gfx_get_gl_data_type(const gfx_pixel_format format);
 void gfx_texture_init(gfx_texture *texture, const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char *data);
 void gfx_texture_deinit(gfx_texture *texture);
 
-void gfx_texture_upload(gfx_texture *texture, const gfx_pixel_format format, const unsigned char *data);
+void gfx_texture_upload(const gfx_texture *texture, const gfx_pixel_format format, const unsigned char *data);
 void gfx_texture_download(gfx_texture *texture);
 
 #pragma GCC visibility pop

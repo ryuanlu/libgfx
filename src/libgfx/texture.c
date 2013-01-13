@@ -154,7 +154,7 @@ gfx_result gfx_texture_delete(gfx_texture **texture)
 	return GFX_SUCCESS;
 }
 
-void gfx_texture_upload(gfx_texture *texture, const gfx_pixel_format format, const unsigned char *data)
+void gfx_texture_upload(const gfx_texture *texture, const gfx_pixel_format format, const unsigned char *data)
 {
 	if(!texture)
 		return;
