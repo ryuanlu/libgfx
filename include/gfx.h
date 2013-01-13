@@ -39,10 +39,20 @@ typedef enum
 	GFX_CLEAR_COLOR_AND_DEPTH = GFX_CLEAR_COLOR_BUFFER|GFX_CLEAR_DEPTH_BUFFER
 }gfx_fb_clear_target;
 
+typedef enum
+{
+	GFX_VERTEX_SHADER = 0,
+	GFX_FRAGMENT_SHADER,
+	GFX_GEOMETRY_SHADER,
+	GFX_NUMBER_OF_SHADER_TYPES
+}gfx_shader_type;
+
 typedef struct gfx_context gfx_context;
 typedef struct gfx_texture gfx_texture;
 typedef struct gfx_text_layout gfx_text_layout;
 typedef struct gfx_framebuffer gfx_framebuffer;
+typedef struct gfx_shader gfx_shader;
+typedef struct gfx_program gfx_program;
 
 void gfx_init(int *argc, char ***argv);
 
@@ -78,6 +88,12 @@ void gfx_framebuffer_clear(const float red, const float green, const float blue,
 #include <X11/Xlib.h>
 void gfx_glx_blit_framebuffer(const gfx_framebuffer *framebuffer, const Window window);
 #endif
+
+gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source);
+void gfx_shader_delete(gfx_shader** shader);
+gfx_shader *gfx_shader_new_from_file(const gfx_shader_type type, const char *filename);
+gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_shader, gfx_shader *fragment_shader);
+void gfx_program_delete(gfx_program** program);
 
 
 #endif /* GFX_H_ */
