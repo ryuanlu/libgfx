@@ -90,10 +90,10 @@ void gfx_glx_blit_framebuffer(const gfx_framebuffer *framebuffer, const Window w
 #endif
 
 gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source);
-void gfx_shader_delete(gfx_shader** shader);
+void gfx_shader_delete(gfx_shader **shader);
 gfx_shader *gfx_shader_new_from_file(const gfx_shader_type type, const char *filename);
 gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_shader, gfx_shader *fragment_shader);
-void gfx_program_delete(gfx_program** program);
-
+void gfx_program_delete(gfx_program **program);
+void gfx_program_use(const gfx_program *program);
 
 #endif /* GFX_H_ */

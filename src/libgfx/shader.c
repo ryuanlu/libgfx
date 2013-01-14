@@ -97,7 +97,7 @@ gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source)
 	return shader;
 }
 
-void gfx_shader_delete(gfx_shader** shader)
+void gfx_shader_delete(gfx_shader **shader)
 {
 	gfx_shader* target;
 	if(!shader || !*shader)
@@ -167,7 +167,7 @@ gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_sha
 	return program;
 }
 
-void gfx_program_delete(gfx_program** program)
+void gfx_program_delete(gfx_program **program)
 {
 	gfx_program* target;
 
@@ -184,3 +184,12 @@ void gfx_program_delete(gfx_program** program)
 
 	*program = NULL;
 }
+
+void gfx_program_use(const gfx_program *program)
+{
+	if(!program)
+		return;
+
+	glUseProgram(program->object);
+}
+
