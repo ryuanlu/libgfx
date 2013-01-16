@@ -255,7 +255,7 @@ gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_
 		buffer_bit = GL_DEPTH_BUFFER_BIT;
 		break;
 	default:
-		break;
+		return GFX_ERROR;
 	}
 
 	glGenFramebuffers(1, &tmpfbo);
