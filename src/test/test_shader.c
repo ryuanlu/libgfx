@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include "gfx.h"
 
-#define VERTEX_SHADER_FILENAME "vs.txt"
-#define FRAGMENT_SHADER_FILENAME "fs.txt"
-
 int main(int argc, char **argv)
 {
 	gfx_context *ctx = NULL;
@@ -13,14 +10,9 @@ int main(int argc, char **argv)
 	gfx_init(&argc, &argv);
 	ctx = gfx_context_new(NULL);
 
-	pg = gfx_program_new
-	(
-		gfx_shader_new_from_file(GFX_VERTEX_SHADER, VERTEX_SHADER_FILENAME),
-		NULL,
-		gfx_shader_new_from_file(GFX_FRAGMENT_SHADER, FRAGMENT_SHADER_FILENAME)
-	);
-
+	pg = gfx_program_new_from_integrated(GFX_SIMPLE_COLOR_PROGRAM);
 	gfx_program_delete(&pg);
+
 	gfx_context_make_current(ctx);
 	gfx_context_delete(&ctx);
 
