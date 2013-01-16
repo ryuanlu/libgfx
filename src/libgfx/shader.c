@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <glib.h>
 #include "gfx.h"
+#include "builtin_shaders.h"
 
 #define gfx_is_valid_shader_type(shader) (shader >= 0 && shader < GFX_NUMBER_OF_SHADER_TYPES)
 
@@ -54,7 +55,7 @@ static void print_program_log(GLuint object)
 }
 
 
-gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source)
+gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source, const int size)
 {
 	gfx_shader *shader = NULL;
 	GLuint target;
@@ -82,7 +83,7 @@ gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source)
 
 	shader->object = glCreateShader(target);
 	shader->type = type;
-	glShaderSource(shader->object, 1, &source, NULL);
+	glShaderSource(shader->object, 1, &source, size ? &size : NULL);
 	glCompileShader(shader->object);
 	glGetShaderiv(shader->object, GL_COMPILE_STATUS, &status);
 
@@ -99,7 +100,7 @@ gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source)
 
 void gfx_shader_delete(gfx_shader **shader)
 {
-	gfx_shader* target;
+	gfx_shader *target;
 	if(!shader || !*shader)
 		return;
 
@@ -121,7 +122,7 @@ gfx_shader *gfx_shader_new_from_file(const gfx_shader_type type, const char *fil
 	if(!source)
 		return NULL;
 
-	shader = gfx_shader_new(type, source);
+	shader = gfx_shader_new(type, source, 0);
 	g_free(source);
 
 	return shader;
@@ -169,7 +170,7 @@ gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_sha
 
 void gfx_program_delete(gfx_program **program)
 {
-	gfx_program* target;
+	gfx_program *target;
 
 	if(!program || !*program)
 		return;
@@ -191,5 +192,30 @@ void gfx_program_use(const gfx_program *program)
 		return;
 
 	glUseProgram(program->object);
+}
+
+gfx_program *gfx_program_new_from_integrated(const gfx_program_profile profile)
+{
+	gfx_program *program = NULL;
+
+	switch(profile)
+	{
+	case GFX_SIMPLE_COLOR_PROGRAM:
+		program = gfx_program_new
+		(
+			gfx_shader_new(GFX_VERTEX_SHADER, shaders_simple_color_vs_txt, shaders_simple_color_vs_txt_len),
+			NULL,
+			gfx_shader_new(GFX_FRAGMENT_SHADER, shaders_simple_color_fs_txt, shaders_simple_color_fs_txt_len)
+		);
+		break;
+	case GFX_SIMPLE_TEXTURE_PROGRAM:
+		break;
+	case GFX_FULL_FEATURED_PROGRAM:
+		break;
+	default:
+		return NULL;
+	}
+
+	return program;
 }
 

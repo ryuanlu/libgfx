@@ -1,0 +1,9 @@
+#version 330
+
+smooth in vec4 smooth_color;
+out vec4 output;
+
+void main()
+{
+	output = smooth_color;
+}

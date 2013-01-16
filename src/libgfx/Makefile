@@ -10,13 +10,19 @@ LIBGFX_LDFLAGS:=-shared $(shell pkg-config --libs $(PKG_CONFIG_PACKAGES)) -Wall
 all: $(OUTPUT_SHARED_OBJECT)
 
 clean:
-	rm -f *.o $(OUTPUT_SHARED_OBJECT)
+	rm -f *.o $(OUTPUT_SHARED_OBJECT) builtin_shaders.h
 
 %.o: %.c
 	@echo "	CC	$@"
 	@$(CC) -c $< -o $@ $(LIBGFX_CFLAGS)
 
+shader.o: shader.c builtin_shaders.h
+
 $(OUTPUT_SHARED_OBJECT): $(OBJECT_FILES)
 	@echo "	LD	$@"
 	@$(CC) $^ -o $@ $(LIBGFX_LDFLAGS)
 
+builtin_shaders.h: $(wildcard shaders/*.txt)
+	@echo "	XXD	$@"
+	@rm -f $@
+	@$(foreach file, $^, xxd -i $(file) | sed 's/unsigned char/char/g' >> $@;)

@@ -47,6 +47,14 @@ typedef enum
 	GFX_NUMBER_OF_SHADER_TYPES
 }gfx_shader_type;
 
+typedef enum
+{
+	GFX_SIMPLE_COLOR_PROGRAM = 0,
+	GFX_SIMPLE_TEXTURE_PROGRAM,
+	GFX_FULL_FEATURED_PROGRAM,
+	GFX_NUMBER_OF_PROGRAM_PROFILES
+}gfx_program_profile;
+
 typedef struct gfx_context gfx_context;
 typedef struct gfx_texture gfx_texture;
 typedef struct gfx_text_layout gfx_text_layout;
@@ -89,11 +97,12 @@ void gfx_framebuffer_clear(const float red, const float green, const float blue,
 void gfx_glx_blit_framebuffer(const gfx_framebuffer *framebuffer, const Window window);
 #endif
 
-gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source);
+gfx_shader *gfx_shader_new(const gfx_shader_type type, const char *source, const int size);
 void gfx_shader_delete(gfx_shader **shader);
 gfx_shader *gfx_shader_new_from_file(const gfx_shader_type type, const char *filename);
 gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_shader, gfx_shader *fragment_shader);
 void gfx_program_delete(gfx_program **program);
 void gfx_program_use(const gfx_program *program);
+gfx_program *gfx_program_new_from_integrated(const gfx_program_profile profile);
 
 #endif /* GFX_H_ */
