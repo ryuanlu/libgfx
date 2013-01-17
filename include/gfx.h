@@ -61,6 +61,7 @@ typedef struct gfx_text_layout gfx_text_layout;
 typedef struct gfx_framebuffer gfx_framebuffer;
 typedef struct gfx_shader gfx_shader;
 typedef struct gfx_program gfx_program;
+typedef float mat4[16];
 
 void gfx_init(int *argc, char ***argv);
 
@@ -104,5 +105,11 @@ gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_sha
 void gfx_program_delete(gfx_program **program);
 void gfx_program_use(const gfx_program *program);
 gfx_program *gfx_program_new_from_integrated(const gfx_program_profile profile);
+
+void gfx_mat4_set_identity(mat4 matrix);
+void gfx_mat4_multiply(mat4 output, const mat4 A, const mat4 B);
+void gfx_mat4_set_translate(mat4 matrix, const float x, const float y, const float z);
+void gfx_mat4_set_rotate(mat4 matrix, const float x, const float y, const float z, const float angle);
+void gfx_mat4_set_lookat(mat4 matrix, const float from_x, const float from_y, const float from_z, const float to_x, const float to_y, const float to_z, const float up_x, const float up_y, const float up_z);
 
 #endif /* GFX_H_ */
