@@ -209,6 +209,13 @@ gfx_program *gfx_program_new_from_integrated(const gfx_program_profile profile)
 		);
 		break;
 	case GFX_SIMPLE_TEXTURE_PROGRAM:
+		program = gfx_program_new
+		(
+			gfx_shader_new(GFX_VERTEX_SHADER, shaders_simple_texture_vs_txt, shaders_simple_texture_vs_txt_len),
+			NULL,
+			gfx_shader_new(GFX_FRAGMENT_SHADER, shaders_simple_texture_fs_txt, shaders_simple_texture_fs_txt_len)
+		);
+
 		break;
 	case GFX_FULL_FEATURED_PROGRAM:
 		break;

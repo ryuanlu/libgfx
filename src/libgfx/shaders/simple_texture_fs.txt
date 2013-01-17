@@ -1,0 +1,10 @@
+#version 330
+
+uniform sampler2D texture;
+smooth in vec2 smooth_texcoord;
+out vec4 output;
+
+void main()
+{
+	output = texture2D(texture, smooth_texcoord);
+}
