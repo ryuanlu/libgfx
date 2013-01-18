@@ -2,8 +2,6 @@
 #include <string.h>
 #include "gfx.h"
 
-#define GFX_PI (3.1415926)
-
 void gfx_mat4_set_identity(mat4 matrix)
 {
 	int i;
@@ -73,7 +71,7 @@ void gfx_mat4_set_rotate(mat4 matrix, const float x, const float y, const float 
 	ay = y / mag;
 	az = z / mag;
 
-	b = angle / 180.0 * GFX_PI;
+	b = angle / 180.0 * M_PI;
 	c = cos(b);
 	ac = 1.00f - c;
 	s = sin(b);
