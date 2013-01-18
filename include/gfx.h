@@ -112,5 +112,6 @@ void gfx_mat4_set_translate(mat4 matrix, const float x, const float y, const flo
 void gfx_mat4_set_rotate(mat4 matrix, const float x, const float y, const float z, const float angle);
 void gfx_mat4_set_scale(mat4 matrix, const float x, const float y, const float z);
 void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, const float eye_z, const float center_x, const float center_y, const float center_z, const float up_x, const float up_y, const float up_z);
+void gfx_mat4_set_frustrum(float *matrix, float left, float right, float bottom, float top, float znear, float zfar);
 
 #endif /* GFX_H_ */
