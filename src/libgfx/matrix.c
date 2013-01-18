@@ -169,3 +169,10 @@ void gfx_mat4_set_frustrum(float *matrix, float left, float right, float bottom,
 	matrix[15] = 0.0;
 }
 
+void gfx_mat4_set_perspective(float *matrix, float fovy, float aspect, float znear, float zfar)
+{
+	float ymax, xmax;
+	ymax = znear * tanf(fovy * M_PI / 360.0);
+	xmax = ymax * aspect;
+	gfx_mat4_set_frustrum(matrix, -xmax, xmax, -ymax, ymax, znear, zfar);
+}
