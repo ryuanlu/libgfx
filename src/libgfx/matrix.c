@@ -183,3 +183,20 @@ void gfx_mat4_set_perspective(mat4 matrix, const float fovy, const float aspect,
 
 	gfx_mat4_set_frustrum(matrix, -xmax, xmax, -ymax, ymax, zNear, zFar);
 }
+
+void gfx_mat4_set_ortho(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal)
+{
+	if(!matrix)
+		return;
+
+	gfx_mat4_set_identity(matrix);
+
+	matrix[0] = 2.0 / (right - left);
+	matrix[5] = 2.0 / (top - bottom);
+	matrix[10] = -2.0 / (farVal - nearVal);
+
+	matrix[12] = -(right + left) / (right - left);
+	matrix[13] = -(top + bottom) / (top - bottom);
+	matrix[14] = -(farVal + nearVal) / (farVal - nearVal);
+}
+

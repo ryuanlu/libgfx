@@ -114,5 +114,6 @@ void gfx_mat4_set_scale(mat4 matrix, const float x, const float y, const float z
 void gfx_mat4_set_lookat(mat4 matrix, const float eyeX, const float eyeY, const float eyeZ, const float centerX, const float centerY, const float centerZ, const float upX, const float upY, const float upZ);
 void gfx_mat4_set_frustrum(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal);
 void gfx_mat4_set_perspective(mat4 matrix, const float fovy, const float aspect, const float zNear, const float zFar);
+void gfx_mat4_set_ortho(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal);
 
 #endif /* GFX_H_ */
