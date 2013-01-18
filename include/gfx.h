@@ -111,8 +111,8 @@ void gfx_mat4_multiply(mat4 output, const mat4 A, const mat4 B);
 void gfx_mat4_set_translate(mat4 matrix, const float x, const float y, const float z);
 void gfx_mat4_set_rotate(mat4 matrix, const float x, const float y, const float z, const float angle);
 void gfx_mat4_set_scale(mat4 matrix, const float x, const float y, const float z);
-void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, const float eye_z, const float center_x, const float center_y, const float center_z, const float up_x, const float up_y, const float up_z);
-void gfx_mat4_set_frustrum(float *matrix, float left, float right, float bottom, float top, float znear, float zfar);
-void gfx_mat4_set_perspective(float *matrix, float fovy, float aspect, float znear, float zfar);
+void gfx_mat4_set_lookat(mat4 matrix, const float eyeX, const float eyeY, const float eyeZ, const float centerX, const float centerY, const float centerZ, const float upX, const float upY, const float upZ);
+void gfx_mat4_set_frustrum(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal);
+void gfx_mat4_set_perspective(mat4 matrix, const float fovy, const float aspect, const float zNear, const float zFar);
 
 #endif /* GFX_H_ */

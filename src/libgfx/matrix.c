@@ -102,7 +102,7 @@ void gfx_mat4_set_scale(mat4 matrix, const float x, const float y, const float z
 
 }
 
-void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, const float eye_z, const float center_x, const float center_y, const float center_z, const float up_x, const float up_y, const float up_z)
+void gfx_mat4_set_lookat(mat4 matrix, const float eyeX, const float eyeY, const float eyeZ, const float centerX, const float centerY, const float centerZ, const float upX, const float upY, const float upZ)
 {
 	float length;
 	mat4 t;
@@ -112,15 +112,15 @@ void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, cons
 
 	gfx_mat4_set_identity(matrix);
 
-	length = sqrt(up_x * up_x + up_y * up_y + up_z * up_z);
-	matrix[1] = up_x / length;
-	matrix[5] = up_y / length;
-	matrix[9] = up_z / length;
+	length = sqrt(upX * upX + upY * upY + upZ * upZ);
+	matrix[1] = upX / length;
+	matrix[5] = upY / length;
+	matrix[9] = upZ / length;
 
-	length = sqrt((center_x - eye_x) * (center_x - eye_x) + (center_y - eye_y) * (center_y - eye_y) + (center_z - eye_z) * (center_z - eye_z));
-	matrix[2] = -(center_x - eye_x) / length;
-	matrix[6] = -(center_y - eye_y) / length;
-	matrix[10] = -(center_z - eye_z) / length;
+	length = sqrt((centerX - eyeX) * (centerX - eyeX) + (centerY - eyeY) * (centerY - eyeY) + (centerZ - eyeZ) * (centerZ - eyeZ));
+	matrix[2] = -(centerX - eyeX) / length;
+	matrix[6] = -(centerY - eyeY) / length;
+	matrix[10] = -(centerZ - eyeZ) / length;
 
 	matrix[0] = matrix[5] * matrix[10] - matrix[9] * matrix[6];
 	matrix[4] = matrix[9] * matrix[2] - matrix[1] * matrix[10];
@@ -138,18 +138,21 @@ void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, cons
 	matrix[5] /= length;
 	matrix[9] /= length;
 
-	gfx_mat4_set_translate(t, -eye_x, -eye_y, -eye_z);
+	gfx_mat4_set_translate(t, -eyeX, -eyeY, -eyeZ);
 	gfx_mat4_multiply(matrix, matrix, t);
 
 }
 
-void gfx_mat4_set_frustrum(float *matrix, float left, float right, float bottom, float top, float znear, float zfar)
+void gfx_mat4_set_frustrum(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal)
 {
 	float temp, temp2, temp3, temp4;
-	temp = 2.0 * znear;
+	temp = 2.0 * nearVal;
 	temp2 = right - left;
 	temp3 = top - bottom;
-	temp4 = zfar - znear;
+	temp4 = farVal - nearVal;
+
+	if(!matrix)
+		return;
 
 	matrix[0] = temp / temp2;
 	matrix[1] = 0.0;
@@ -161,18 +164,22 @@ void gfx_mat4_set_frustrum(float *matrix, float left, float right, float bottom,
 	matrix[7] = 0.0;
 	matrix[8] = (right + left) / temp2;
 	matrix[9] = (top + bottom) / temp3;
-	matrix[10] = (-zfar - znear) / temp4;
+	matrix[10] = (-farVal - nearVal) / temp4;
 	matrix[11] = -1.0;
 	matrix[12] = 0.0;
 	matrix[13] = 0.0;
-	matrix[14] = (-temp * zfar) / temp4;
+	matrix[14] = (-temp * farVal) / temp4;
 	matrix[15] = 0.0;
 }
 
-void gfx_mat4_set_perspective(float *matrix, float fovy, float aspect, float znear, float zfar)
+void gfx_mat4_set_perspective(mat4 matrix, const float fovy, const float aspect, const float zNear, const float zFar)
 {
 	float ymax, xmax;
-	ymax = znear * tanf(fovy * M_PI / 360.0);
+	ymax = zNear * tanf(fovy * M_PI / 360.0);
 	xmax = ymax * aspect;
-	gfx_mat4_set_frustrum(matrix, -xmax, xmax, -ymax, ymax, znear, zfar);
+
+	if(!matrix)
+		return;
+
+	gfx_mat4_set_frustrum(matrix, -xmax, xmax, -ymax, ymax, zNear, zFar);
 }
