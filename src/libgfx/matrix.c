@@ -104,9 +104,44 @@ void gfx_mat4_set_scale(mat4 matrix, const float x, const float y, const float z
 
 }
 
-void gfx_mat4_set_lookat(mat4 matrix, const float from_x, const float from_y, const float from_z, const float to_x, const float to_y, const float to_z,	const float up_x, const float up_y, const float up_z)
+void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, const float eye_z, const float center_x, const float center_y, const float center_z, const float up_x, const float up_y, const float up_z)
 {
+	float length;
+	mat4 t;
+
 	if(!matrix)
 		return;
+
+	gfx_mat4_set_identity(matrix);
+
+	length = sqrt(up_x * up_x + up_y * up_y + up_z * up_z);
+	matrix[1] = up_x / length;
+	matrix[5] = up_y / length;
+	matrix[9] = up_z / length;
+
+	length = sqrt((center_x - eye_x) * (center_x - eye_x) + (center_y - eye_y) * (center_y - eye_y) + (center_z - eye_z) * (center_z - eye_z));
+	matrix[2] = -(center_x - eye_x) / length;
+	matrix[6] = -(center_y - eye_y) / length;
+	matrix[10] = -(center_z - eye_z) / length;
+
+	matrix[0] = matrix[5] * matrix[10] - matrix[9] * matrix[6];
+	matrix[4] = matrix[9] * matrix[2] - matrix[1] * matrix[10];
+	matrix[8] = matrix[1] * matrix[6] - matrix[5] * matrix[2];
+	length = sqrt(matrix[0] * matrix[0] + matrix[4] * matrix[4] + matrix[8] * matrix[8]);
+	matrix[0] /= length;
+	matrix[4] /= length;
+	matrix[8] /= length;
+
+	matrix[1] = matrix[6] * matrix[8] - matrix[10] * matrix[4];
+	matrix[5] = matrix[10] * matrix[0] - matrix[2] * matrix[8];
+	matrix[9] = matrix[2] * matrix[4] - matrix[6] * matrix[0];
+	length = sqrt(matrix[1] * matrix[1] + matrix[5] * matrix[5] + matrix[9] * matrix[9]);
+	matrix[1] /= length;
+	matrix[5] /= length;
+	matrix[9] /= length;
+
+	gfx_mat4_set_translate(t, -eye_x, -eye_y, -eye_z);
+	gfx_mat4_multiply(matrix, matrix, t);
+
 }
 

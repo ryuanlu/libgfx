@@ -110,6 +110,6 @@ void gfx_mat4_set_identity(mat4 matrix);
 void gfx_mat4_multiply(mat4 output, const mat4 A, const mat4 B);
 void gfx_mat4_set_translate(mat4 matrix, const float x, const float y, const float z);
 void gfx_mat4_set_rotate(mat4 matrix, const float x, const float y, const float z, const float angle);
-void gfx_mat4_set_lookat(mat4 matrix, const float from_x, const float from_y, const float from_z, const float to_x, const float to_y, const float to_z, const float up_x, const float up_y, const float up_z);
+void gfx_mat4_set_lookat(mat4 matrix, const float eye_x, const float eye_y, const float eye_z, const float center_x, const float center_y, const float center_z, const float up_x, const float up_y, const float up_z);
 
 #endif /* GFX_H_ */
