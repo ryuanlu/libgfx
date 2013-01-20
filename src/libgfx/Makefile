@@ -10,7 +10,8 @@ LIBGFX_LDFLAGS:=-shared $(shell pkg-config --libs $(PKG_CONFIG_PACKAGES)) -Wall
 all: $(OUTPUT_SHARED_OBJECT)
 
 clean:
-	rm -f *.o $(OUTPUT_SHARED_OBJECT) builtin_shaders.h
+	@echo "	CLEAN"
+	@rm -f *.o $(OUTPUT_SHARED_OBJECT) builtin_shaders.h
 
 %.o: %.c
 	@echo "	CC	$@"

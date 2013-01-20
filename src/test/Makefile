@@ -4,7 +4,8 @@ TEST_LDFLAGS:=-I../../include -L../libgfx -lgfx `pkg-config --libs --cflags gtk+
 all: $(TEST_BINARY)
 
 clean:
-	rm -f $(TEST_BINARY)
+	@echo "	CLEAN"
+	@rm -f $(TEST_BINARY)
 
 %: %.c
 	@echo "	CCLD	$@"
