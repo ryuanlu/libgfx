@@ -151,7 +151,7 @@ gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_sha
 	if(fragment_shader && fragment_shader->type == GFX_FRAGMENT_SHADER)
 	{
 		glAttachShader(program->object, fragment_shader->object);
-		program->geometry_shader = fragment_shader;
+		program->fragment_shader = fragment_shader;
 	}
 
 	glLinkProgram(program->object);
