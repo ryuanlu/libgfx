@@ -6,6 +6,7 @@
 #include <GL/glx.h>
 #endif
 #include "framebuffer.h"
+#include "vertex.h"
 
 struct gfx_context
 {
@@ -14,7 +15,7 @@ struct gfx_context
 	GLXContext opengl_context;
 #endif
 	gfx_framebuffer *current_framebuffer;
-
+	gfx_vertex_array *current_vertex_array;
 };
 
 #pragma GCC visibility push(hidden)

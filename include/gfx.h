@@ -55,6 +55,13 @@ typedef enum
 	GFX_NUMBER_OF_PROGRAM_PROFILES
 }gfx_program_profile;
 
+typedef enum
+{
+	GFX_ATTRIBUTE_ARRAY = 0,
+	GFX_INDEX_ARRAY,
+	GFX_NUMBER_OF_ARRAY_TYPES
+}gfx_array_type;
+
 typedef struct gfx_context gfx_context;
 typedef struct gfx_texture gfx_texture;
 typedef struct gfx_text_layout gfx_text_layout;
@@ -62,6 +69,8 @@ typedef struct gfx_framebuffer gfx_framebuffer;
 typedef struct gfx_shader gfx_shader;
 typedef struct gfx_program gfx_program;
 typedef float mat4[16];
+typedef struct gfx_vertex_attribute gfx_vertex_attribute;
+typedef struct gfx_vertex_array gfx_vertex_array;
 
 void gfx_init(int *argc, char ***argv);
 
@@ -115,5 +124,10 @@ void gfx_mat4_set_lookat(mat4 matrix, const float eyeX, const float eyeY, const 
 void gfx_mat4_set_frustrum(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal);
 void gfx_mat4_set_perspective(mat4 matrix, const float fovy, const float aspect, const float zNear, const float zFar);
 void gfx_mat4_set_ortho(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal);
+
+gfx_vertex_attribute *gfx_vertex_attribute_new(const gfx_array_type type, void *data, const int size, const int hint);
+gfx_vertex_array *gfx_vertex_array_new(void);
+void gfx_vertex_array_bind(gfx_vertex_array *vertex_array);
+void gfx_vertex_array_attach_attribute(const gfx_vertex_attribute *attribute, const int index, const int size, const int type, const int normalized, const int stride, const void *pointer);
 
 #endif /* GFX_H_ */
