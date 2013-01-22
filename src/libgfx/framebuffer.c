@@ -100,6 +100,7 @@ gfx_result gfx_framebuffer_bind(gfx_framebuffer *framebuffer)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer ? framebuffer->fbo : 0);
 	gfx_current_context->current_framebuffer = framebuffer;
+	glViewport(0, 0, framebuffer->width, framebuffer->height);
 
 	return GFX_SUCCESS;
 }
