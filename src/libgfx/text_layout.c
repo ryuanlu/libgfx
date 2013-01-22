@@ -72,7 +72,13 @@ void gfx_text_layout_delete(gfx_text_layout **textlayout)
 
 void gfx_text_layout_render(gfx_text_layout *textlayout)
 {
-	gfx_texture *texture = &(textlayout->_gfx_texture);
+	int i;
+	gfx_texture *texture = NULL;
+
+	if(!textlayout)
+		return;
+
+	texture = &(textlayout->_gfx_texture);
 
 	cairo_identity_matrix(texture->cairo_context);
 	cairo_translate(texture->cairo_context, 0, texture->height);
@@ -97,7 +103,18 @@ void gfx_text_layout_render(gfx_text_layout *textlayout)
 		textlayout->foreground_color.blue,
 		textlayout->foreground_color.alpha
 	);
+
 	pango_cairo_show_layout(texture->cairo_context, textlayout->pango_layout);
+
+	for (i = 0; i < textlayout->_gfx_texture.size / 4; ++i)
+	{
+		if(textlayout->_gfx_texture.data[i * 4 + 3] && textlayout->_gfx_texture.data[i * 4 + 3] != 0xff)
+		{
+			textlayout->_gfx_texture.data[i * 4 + 0] = (float)textlayout->_gfx_texture.data[i * 4 + 0] / ((float)textlayout->_gfx_texture.data[i * 4 + 3] / 255.0);
+			textlayout->_gfx_texture.data[i * 4 + 1] = (float)textlayout->_gfx_texture.data[i * 4 + 1] / ((float)textlayout->_gfx_texture.data[i * 4 + 3] / 255.0);
+			textlayout->_gfx_texture.data[i * 4 + 2] = (float)textlayout->_gfx_texture.data[i * 4 + 2] / ((float)textlayout->_gfx_texture.data[i * 4 + 3] / 255.0);
+		}
+	}
 
 	gfx_texture_upload(texture, texture->format, texture->data);
 }
