@@ -62,6 +62,35 @@ typedef enum
 	GFX_NUMBER_OF_ARRAY_TYPES
 }gfx_array_type;
 
+typedef enum
+{
+	GFX_BYTE = 0,
+	GFX_UNSIGNED_BYTE,
+	GFX_SHORT,
+	GFX_UNSIGNED_SHORT,
+	GFX_INT,
+	GFX_UNSIGNED_INT,
+	GFX_FLOAT,
+	GFX_DOUBLE
+}gfx_data_type;
+
+typedef enum
+{
+	GFX_POINTS = 0,
+	GFX_LINES,
+	GFX_LINE_STRIP,
+	GFX_LINE_LOOP,
+	GFX_TRIANGLES,
+	GFX_TRIANGLE_STRIP,
+}gfx_draw_mode;
+
+typedef enum
+{
+	GFX_STATIC_DRAW = 0,
+	GFX_DYNAMIC_DRAW,
+	GFX_STREAM_DRAW
+}gfx_draw_hint;
+
 typedef struct gfx_context gfx_context;
 typedef struct gfx_texture gfx_texture;
 typedef struct gfx_text_layout gfx_text_layout;
@@ -126,9 +155,12 @@ void gfx_mat4_set_frustrum(mat4 matrix, const float left, const float right, con
 void gfx_mat4_set_perspective(mat4 matrix, const float fovy, const float aspect, const float zNear, const float zFar);
 void gfx_mat4_set_ortho(mat4 matrix, const float left, const float right, const float bottom, const float top, const float nearVal, const float farVal);
 
-gfx_vertex_attribute *gfx_vertex_attribute_new(const gfx_array_type type, void *data, const int size, const int hint);
+gfx_vertex_attribute *gfx_vertex_attribute_new(const gfx_array_type array_type, void *data, const gfx_data_type data_type, const int count, const gfx_draw_hint hint);
 gfx_vertex_array *gfx_vertex_array_new(void);
 void gfx_vertex_array_bind(gfx_vertex_array *vertex_array);
 void gfx_vertex_array_attach_attribute(const gfx_vertex_attribute *attribute, const int index, const int size, const int type, const int normalized, const int stride, const void *pointer);
+void gfx_vertex_array_attach_index(const gfx_vertex_attribute *attribute);
+void gfx_vertex_array_draw(const gfx_draw_mode mode, const int start, const int count);
+
 
 #endif /* GFX_H_ */
