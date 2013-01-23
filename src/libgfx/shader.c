@@ -226,3 +226,13 @@ gfx_program *gfx_program_new_from_integrated(const gfx_program_profile profile)
 	return program;
 }
 
+void gfx_program_set_uniform_mat4(const char *uniform, mat4 matrix)
+{
+	int location, program;
+	if(!uniform || !matrix)
+		return;
+
+	glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+	location = glGetUniformLocation(program, uniform);
+	glUniformMatrix4fv(location, 1, GL_FALSE, matrix);
+}

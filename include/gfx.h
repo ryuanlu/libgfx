@@ -114,6 +114,7 @@ gfx_program *gfx_program_new(gfx_shader *vertex_shader, gfx_shader *geometry_sha
 void gfx_program_delete(gfx_program **program);
 void gfx_program_use(const gfx_program *program);
 gfx_program *gfx_program_new_from_integrated(const gfx_program_profile profile);
+void gfx_program_set_uniform_mat4(const char *uniform, mat4 matrix);
 
 void gfx_mat4_set_identity(mat4 matrix);
 void gfx_mat4_multiply(mat4 output, const mat4 A, const mat4 B);
