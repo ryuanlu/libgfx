@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <GL/glew.h>
+#include <IL/il.h>
 #include "texture.h"
 #include "framebuffer.h"
 #include "context.h"
@@ -64,6 +65,40 @@ GLenum gfx_get_gl_data_type(const gfx_pixel_format format)
 	default:
 		return GL_UNSIGNED_BYTE;
 	}
+}
+
+static ILenum gfx_get_il_image_format(const gfx_image_format format)
+{
+	ILenum table[] =
+	{
+		IL_BMP,
+		IL_JPG,
+		IL_PNG,
+		IL_DDS,
+		IL_GIF,
+		IL_TGA,
+		IL_TIF,
+		IL_PSD,
+		IL_XPM,
+		IL_DICOM
+	};
+
+	return table[format];
+}
+
+static ILenum gfx_get_il_pixel_format(const gfx_pixel_format format)
+{
+	ILenum table[] =
+	{
+		IL_RGBA,
+		IL_RGB,
+		IL_LUMINANCE_ALPHA,
+		IL_LUMINANCE,
+		IL_BGRA,
+		IL_BGR,
+	};
+
+	return table[format];
 }
 
 static int sizeof_pixel(gfx_pixel_format format)
@@ -146,72 +181,41 @@ gfx_texture *gfx_texture_new(const int width, const int height, const int depth,
 	return texture;
 }
 
-static cairo_status_t png_reader(void *closure, unsigned char *data, unsigned int length)
-{
-	data_source *source = closure;
-
-	if(source->position >= source->length)
-		return CAIRO_STATUS_READ_ERROR;
-
-	memcpy(data, source->data + source->position, length);
-	source->position += length;
-
-	return CAIRO_STATUS_SUCCESS;
-}
-
-gfx_texture *gfx_texture_new_from_source(const gfx_image_format format, char *data, const int length)
+gfx_texture *gfx_texture_new_from_source(const gfx_pixel_format pixel_format, const gfx_image_format format, char *data, const int length)
 {
 	gfx_texture *texture = NULL;
-	cairo_surface_t *surface = NULL;
-	cairo_surface_t *flipped_surface = NULL;
-	cairo_t *cr;
-	data_source source;
+	ILuint src_image, dest_image;
+	ILubyte *ptr;
+
 	int w, h;
 
 	if(!gfx_is_valid_image_format(format) || !data || length < 1)
 		return NULL;
 
-	source.data = data;
-	source.length = length;
-	source.position = 0;
+	src_image = ilGenImage();
 
-	switch(format)
-	{
-	case GFX_IMAGE_FORMAT_BMP:
-		break;
-	case GFX_IMAGE_FORMAT_JPG:
-		break;
-	case GFX_IMAGE_FORMAT_PNG:
-		surface = cairo_image_surface_create_from_png_stream(png_reader, &source);
+	ilBindImage(src_image);
+	ilLoadL(gfx_get_il_image_format(format), data, length);
+	ilGetIntegerv(IL_IMAGE_WIDTH, &w);
+	ilGetIntegerv(IL_IMAGE_HEIGHT, &h);
 
-		w = cairo_image_surface_get_width(surface);
-		h = cairo_image_surface_get_height(surface);
+	dest_image = ilGenImage();
+	ilBindImage(dest_image);
+	ilTexImage(w, h, 1, 4, IL_BGRA, IL_UNSIGNED_BYTE, NULL);
+	ptr = ilGetData();
 
-		flipped_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+	ilBindImage(src_image);
+	ilCopyPixels(0, 0, 0, w, h, 1, gfx_get_il_pixel_format(pixel_format), IL_UNSIGNED_BYTE, ptr);
 
-		cr = cairo_create(flipped_surface);
-		cairo_translate(cr, 0, h);
-		cairo_scale(cr, 1.0, -1.0);
-		cairo_set_source_surface (cr, surface, 0, 0);
-		cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-		cairo_paint (cr);
+	texture = gfx_texture_new(w, h, 1, pixel_format, ptr);
 
-		texture = gfx_texture_new(w, h, 1, GFX_PIXELFORMAT_BGRA32, cairo_image_surface_get_data(flipped_surface));
-
-		cairo_surface_destroy(surface);
-
-		break;
-	case GFX_IMAGE_FORMAT_SVG:
-
-		break;
-	default:
-		break;
-	}
+	ilDeleteImage(src_image);
+	ilDeleteImage(dest_image);
 
 	return texture;
 }
 
-gfx_texture *gfx_texture_new_from_file(const gfx_image_format format, const char *filename)
+gfx_texture *gfx_texture_new_from_file(const gfx_pixel_format pixel_format, const gfx_image_format format, const char *filename)
 {
 	gfx_texture *texture = NULL;
 	char *data = NULL;
@@ -222,7 +226,9 @@ gfx_texture *gfx_texture_new_from_file(const gfx_image_format format, const char
 
 	g_file_get_contents(filename, &data, &length, NULL);
 
-	texture = gfx_texture_new_from_source(format, data, length);
+	texture = gfx_texture_new_from_source(pixel_format, format, data, length);
+
+	g_free(data);
 
 	return texture;
 }

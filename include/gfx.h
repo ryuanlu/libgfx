@@ -30,7 +30,13 @@ typedef enum
 	GFX_IMAGE_FORMAT_BMP = 0,
 	GFX_IMAGE_FORMAT_JPG,
 	GFX_IMAGE_FORMAT_PNG,
-	GFX_IMAGE_FORMAT_SVG,
+	GFX_IMAGE_FORMAT_DDS,
+	GFX_IMAGE_FORMAT_GIF,
+	GFX_IMAGE_FORMAT_TGA,
+	GFX_IMAGE_FORMAT_TIF,
+	GFX_IMAGE_FORMAT_PSD,
+	GFX_IMAGE_FORMAT_XPM,
+	GFX_IMAGE_FORMAT_DICOM,
 	GFX_NUMBER_OF_IMAGE_FORMAT
 }gfx_image_format;
 
@@ -118,8 +124,8 @@ gfx_result gfx_context_make_current(gfx_context *context);
 
 gfx_texture *gfx_texture_new(const int width, const int height, const int depth, const gfx_pixel_format format, const unsigned char *data);
 gfx_result gfx_texture_delete(gfx_texture **texture);
-gfx_texture *gfx_texture_new_from_source(const gfx_image_format format, char *data, const int length);
-gfx_texture *gfx_texture_new_from_file(const gfx_image_format format, const char *filename);
+gfx_texture *gfx_texture_new_from_source(const gfx_pixel_format pixel_format, const gfx_image_format format, char *data, const int length);
+gfx_texture *gfx_texture_new_from_file(const gfx_pixel_format pixel_format, const gfx_image_format format, const char *filename);
 gfx_result gfx_texture_generate_mipmaps(gfx_texture *texture);
 gfx_result gfx_texture_bind(const int texture_unit, const gfx_texture *texture);
 gfx_result gfx_texture_copy_from_framebuffer(gfx_texture *texture, const gfx_fb_attachment target);
