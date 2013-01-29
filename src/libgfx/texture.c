@@ -198,6 +198,7 @@ gfx_texture *gfx_texture_new_from_source(const gfx_pixel_format pixel_format, co
 	ilLoadL(gfx_get_il_image_format(format), data, length);
 	ilGetIntegerv(IL_IMAGE_WIDTH, &w);
 	ilGetIntegerv(IL_IMAGE_HEIGHT, &h);
+	ilEnable(IL_ORIGIN_SET);
 
 	dest_image = ilGenImage();
 	ilBindImage(dest_image);
