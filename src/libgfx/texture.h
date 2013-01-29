@@ -25,6 +25,7 @@ struct gfx_texture
 };
 
 #define gfx_is_valid_pixel_format(format) (format >= 0 && format < GFX_NUMBER_OF_PIXELFORMAT)
+#define gfx_is_valid_image_format(format) (format >= 0 && format < GFX_NUMBER_OF_IMAGE_FORMAT)
 #pragma GCC visibility push(hidden)
 GLenum gfx_get_gl_format(const gfx_pixel_format format);
 GLenum gfx_get_gl_internal_format(const gfx_pixel_format format);
