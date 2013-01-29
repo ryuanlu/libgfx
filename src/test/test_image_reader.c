@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
 	fb = gfx_framebuffer_new(480, 480, GFX_PIXELFORMAT_BGRA32, 0, 0);
 	gfx_framebuffer_bind(fb);
-	tex = gfx_texture_new_from_file(GFX_IMAGE_FORMAT_PNG, "test.png");
+	tex = gfx_texture_new_from_file(GFX_PIXELFORMAT_BGR24, GFX_IMAGE_FORMAT_BMP, "test.bmp");
 
 	gfx_framebuffer_attach_texture(GFX_ATTACH_COLOR_BUFFER, tex);
 
