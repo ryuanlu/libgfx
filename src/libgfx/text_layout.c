@@ -108,11 +108,18 @@ void gfx_text_layout_render(gfx_text_layout *textlayout)
 
 	for (i = 0; i < textlayout->_gfx_texture.size / 4; ++i)
 	{
-		if(textlayout->_gfx_texture.data[i * 4 + 3] && textlayout->_gfx_texture.data[i * 4 + 3] != 0xff)
+		unsigned char *r, *g, *b, *a;
+
+		b = &(textlayout->_gfx_texture.data[i * 4 + 0]);
+		g = &(textlayout->_gfx_texture.data[i * 4 + 1]);
+		r = &(textlayout->_gfx_texture.data[i * 4 + 2]);
+		a = &(textlayout->_gfx_texture.data[i * 4 + 3]);
+
+		if(*a && *a != 0xff)
 		{
-			textlayout->_gfx_texture.data[i * 4 + 0] = (float)textlayout->_gfx_texture.data[i * 4 + 0] / ((float)textlayout->_gfx_texture.data[i * 4 + 3] / 255.0);
-			textlayout->_gfx_texture.data[i * 4 + 1] = (float)textlayout->_gfx_texture.data[i * 4 + 1] / ((float)textlayout->_gfx_texture.data[i * 4 + 3] / 255.0);
-			textlayout->_gfx_texture.data[i * 4 + 2] = (float)textlayout->_gfx_texture.data[i * 4 + 2] / ((float)textlayout->_gfx_texture.data[i * 4 + 3] / 255.0);
+			*b = (*b * 255 + *a / 2) / *a;
+			*g = (*g * 255 + *a / 2) / *a;
+			*r = (*r * 255 + *a / 2) / *a;
 		}
 	}
 
